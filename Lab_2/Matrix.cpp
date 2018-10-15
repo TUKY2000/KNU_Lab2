@@ -1,5 +1,6 @@
 #include "Matrix.h"
 #include <string>
+#include <iostream>
 
 CMatrix::CMatrix()
 	: cols(1)
@@ -173,9 +174,12 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 {
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
+		std::cout << "Please input collum number" << col << "." << std::endl;
 		for (size_t row = 0; row < matr.getRows(); ++row)
 		{
+			std::cout << "please input value of x[" << row  << "]["<<col << "] " << ":";
 			input >> std::to_string(matr[row][col]);
+			std::cout << std::endl;
 		}
 	}
 	return input;
