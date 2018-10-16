@@ -18,11 +18,6 @@ CAlgorithms::~CAlgorithms()
 }
 
 
-void CAlgorithms::SoLEtoMATR(const std::istream & input)
-{
-
-}
-
 std::vector<double> CAlgorithms::GaussianElimination()
 {
 	unsigned int equations = directElimination();
@@ -125,11 +120,15 @@ bool CAlgorithms::empty(const unsigned int & row) const
 
 std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equations)
 {
-	std::vector<double>res;
-	for (size_t row = equations; row >= 0; --row)
+	std::vector<double>res(equations);
+
+	for (size_t col = matr->getCols() - 1, row = equations; col > 0; --col, --row)
 	{
-		//matr[][]	
+		res[col] = *matr[row][matr->getCols()];
+		*matr[row - 1][matr->getCols()] -= *matr[row - 1][col - 1] * (*matr[row][matr->getCols()]);
+		//	matr[row - 1][col]
 	}
+	
 	return res;
 }
 
