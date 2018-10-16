@@ -122,11 +122,13 @@ std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equati
 {
 	std::vector<double>res(equations);
 
-	for (size_t col = matr->getCols() - 1, row = equations; col > 0; --col, --row)
+	for (size_t indx = matr->getCols() - 1, row = equations; indx >= 0; --indx, --row)
 	{
-		res[col] = *matr[row][matr->getCols()];
-		*matr[row - 1][matr->getCols()] -= *matr[row - 1][col - 1] * (*matr[row][matr->getCols()]);
-		//	matr[row - 1][col]
+		res[indx] = *matr[row][matr->getCols()];
+		for (size_t row = indx - 1; row >= 0; --row)
+		{
+			*matr[row][matr->getCols()] -= *matr[row + 1][matr->getCols()] * (*matr[row][indx]);
+		}
 	}
 	
 	return res;
