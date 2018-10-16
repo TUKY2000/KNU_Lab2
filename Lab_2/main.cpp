@@ -14,6 +14,7 @@ int main()
 	cout << endl; 
 	cout << "Please input number of rows in your matrix:";
 	cin >> iRows;
+	//
 	cout << endl;
 	m->setSize(iRows, iCols);
 	cin >> *m;
