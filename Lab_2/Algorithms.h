@@ -18,7 +18,11 @@ public:
 	//************************************
 	std::vector<double> GaussianElimination();
 
+
+
 private:
+
+	CMatrix * turnMatr = nullptr; // I need that for Jakobi. Ivan . 
 
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
@@ -71,5 +75,31 @@ private:
 	// Parameter:	number linearly independent equations  
 	//************************************
 	std::vector<double> reverseSubstitution(const unsigned int & equations);
+
+
+
+// Jakobi  part
+
+
+	
+	//************************************
+	// Function:	Checking if matrix is a symmetrical
+	// Returns:		bool value
+	// Parameter:	 double array (all matrix value)  
+	//************************************
+	bool isSymmetrical();		// break inside that function let's check + troubles with *
+
+	//************************************
+	// Function:	Checking if matrix is a symmetrical
+	// Returns:		return new massive of own values !!!!! will change that !!!!!!				!!! Warning that function changing matrix !!! 
+	// Parameter:	double array (all matrix value).We will add precision as parametr
+	//
+	//			!!! Warning that function changing matrix !!! 
+	//  
+	//************************************
+	// double turnMatrix(double **solution);
+
+
+
 };
 

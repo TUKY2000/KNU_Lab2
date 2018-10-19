@@ -2,6 +2,10 @@
 
 #include <ostream>
 
+//added for randomiser ( rand 1(a))
+const int m = 1000;
+const double n = (double)m;
+
 class CMatrix
 {
 public:
@@ -40,6 +44,8 @@ private:
 
 	void create();	//	create massive of pointers-massive of pointers
 
+	void symmetricalRandomMatrixValues(CMatrix matr); // we are chanhing matr here
+	
 	unsigned int cols
 		, rows;
 
