@@ -1,4 +1,5 @@
 #include "Matrix.h"
+#include "Algorithms.h"
 #include <iostream>
 using namespace std;
 
@@ -17,6 +18,22 @@ int main()
 	cout << endl;
 	m->setSize(iRows, iCols);
 	cin >> *m;
+	cout << *m;
+	//	test Gaussian method
 
+	CAlgorithms * gaussTest = nullptr;
+	gaussTest = new CAlgorithms(*m);
+
+	std::vector<double> x = gaussTest->GaussianElimination();
+	
+	for (vector<double>::iterator ITER = x.begin(); ITER < x.end(); ++ITER)
+	{
+		cout << *ITER << " ";
+	}
+
+	if (m != nullptr)	delete m;
+	if (gaussTest != nullptr)	delete gaussTest;
+
+	system("pause");
 	return 0;
 }

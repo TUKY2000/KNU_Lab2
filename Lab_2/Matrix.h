@@ -33,7 +33,7 @@ public:
 	friend std::ostream & operator << (std::ostream & output, const CMatrix & matr);
 	friend std::istream & operator >> (std::istream & input, CMatrix & matr);
 		
-	double * operator [] (const int & row) const;
+	double	* operator [] (const int & row) const;
 
 
 private:	
@@ -43,6 +43,6 @@ private:
 	unsigned int cols
 		, rows;
 
-	double * matr = nullptr;
+	double * mass = nullptr;
 };
 

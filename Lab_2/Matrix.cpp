@@ -32,23 +32,20 @@ CMatrix::CMatrix(CMatrix && other)
 	else
 	{
 		*this = other;
-		delete other.matr;
-		other.matr = nullptr;
+		delete other.mass;
+		other.mass = nullptr;
 	}
 }
 
 CMatrix::~CMatrix()
 {
-	if (matr != nullptr)
-		delete matr;
+	if (mass != nullptr)
+		delete mass;
 }
 
 void CMatrix::create()
 {
-	if (matr != nullptr)
-		delete matr;
-
-	matr = new double [rows * cols];
+	mass = new double[rows * cols];
 }
 
 
@@ -71,19 +68,25 @@ void CMatrix::setSize(const unsigned int _rows, const unsigned _cols)
 
 CMatrix & CMatrix::operator=(const CMatrix & other)
 {
+	cols = other.getCols();		
+	rows = other.getRows();
+	create();
 
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			(matr + row * rows)[col] = other[row][col];
+			(mass + row * cols)[col] = other[row][col];
+
 	return *this;
 }
 
 
 bool CMatrix::operator==(const CMatrix & other) const
 {
+	if (mass == nullptr) return false;
+
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			if ((matr + row * rows)[col] != other[row][col])
+			if ((mass + row * rows)[col] != other[row][col])
 				return false;
 
 	return true;
@@ -97,7 +100,7 @@ CMatrix & CMatrix::operator+(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			*matrNew[row][col] = (matr + row * rows)[col] + other[row][col];
+			*matrNew[row][col] = (mass + row * rows)[col] + other[row][col];
 
 	return *matrNew;
 }
@@ -112,7 +115,7 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			*matrNew[row][col] = (matr + row * rows)[col] + other[row][col];
+			*matrNew[row][col] = (mass + row * rows)[col] + other[row][col];
 
 	return *matrNew;
 }
@@ -126,7 +129,7 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
 			for (size_t inner = 0; inner < this->cols; ++inner)
-				*matrNew[row][col] = (matr + row * rows)[inner] - other[inner][col];
+				*matrNew[row][col] = (mass + row * rows)[inner] - other[inner][col];
 
 	return *matrNew;
 }
@@ -136,7 +139,7 @@ CMatrix & CMatrix::operator*(const double & num)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
-				*matrNew[row][col] = (matr + row * rows)[col] * num;
+			*matrNew[row][col] = (mass + row * rows)[col] * num;
 
 	return *matrNew;
 }
@@ -146,21 +149,21 @@ CMatrix & CMatrix::operator~()
 	CMatrix * matrNew = new CMatrix(this->cols, this->rows);
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
-			*matrNew[row][col] = (matr + row * rows)[col];
+			*matrNew[row][col] = (mass + row * rows)[col];
 
 	return *matrNew;
 }
 
 double * CMatrix::operator[](const int & row) const
 {
-	return (matr + row * rows);
+	return (mass + row * cols);
 }
 
 std::ostream & operator<<(std::ostream & output, const CMatrix & matr)	//	!!!
 {
-	for (size_t col = 0; col < matr.getCols(); ++col)
+	for (size_t row = 0; row < matr.getRows(); ++row)
 	{
-		for (size_t row = 0; row < matr.getRows(); ++row)
+		for (size_t col = 0; col < matr.getCols(); ++col)
 		{
 			output << matr[row][col] << "\t";
 		}
@@ -172,16 +175,19 @@ std::ostream & operator<<(std::ostream & output, const CMatrix & matr)	//	!!!
 
 std::istream & operator >> (std::istream & input, CMatrix & matr)
 {
-	for (size_t col = 0; col < matr.getCols(); ++col)
+	std::string snum;
+	for (size_t row = 0; row < matr.getRows(); ++row)
 	{
-		std::cout << "Please input collum number" << col << "." << std::endl;
-		for (size_t row = 0; row < matr.getRows(); ++row)
+		std::cout << "Please input row number " << row << "." << std::endl;
+		for (size_t col = 0; col < matr.getCols(); ++col)
 		{
-			std::cout << "please input value of x[" << row  << "]["<<col << "] " << ":";
-			input >> std::to_string(matr[row][col]);
+			std::cout << "please input value of x[" << row << "][" << col << "] " << ":";
+			input >> snum;
+			matr[row][col] = std::atol(snum.c_str());
 			std::cout << std::endl;
 		}
 	}
+
 	return input;
 }
 

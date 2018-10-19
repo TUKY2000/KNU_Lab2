@@ -9,6 +9,10 @@ public:
 	CAlgorithms();
 	~CAlgorithms();
 
+	CAlgorithms(const CMatrix & _matr);
+
+	void downlMatr(const CMatrix & _matr);
+
 	//void SoLEtoMATR(const std::istream & input);
 
 	//************************************
@@ -18,8 +22,19 @@ public:
 	//************************************
 	std::vector<double> GaussianElimination();
 
-private:
 
+	//************************************
+	// Function:  Checking if matrix is a symmetrical
+	// Returns:    return new massive of own values !!!!! will change that !!!!!!        !!! Warning that function changing matrix !!! 
+	// Parameter:  double array (all matrix value).We will add precision as parametr
+	//
+	//      !!! Warning that function changing matrix !!! 
+	//  
+	//************************************
+	double turnMatrix(double **solution);
+
+private:
+		
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
 
@@ -35,7 +50,7 @@ private:
 	// Returns:		number of row where is max element
 	// Parameter:	const int & col
 	//************************************
-	int findMax(const int & col) const;
+	std::pair<unsigned const int, double> findMax(const int & col) const;
 
 	//************************************
 	// Function:	swap rows int matrix
@@ -49,7 +64,7 @@ private:
 	// Returns:		void
 	// Parameter:	number of row of the leading element, number of col of the leading element
 	//************************************
-	void normalize(const int & elrow, const int & elcol);
+	void normalize(unsigned const int & row, const int & element);
 
 	//************************************
 	// Function:	nullifier all elements below in column of the leading element by subtraction of rows
@@ -71,5 +86,13 @@ private:
 	// Parameter:	number linearly independent equations  
 	//************************************
 	std::vector<double> reverseSubstitution(const unsigned int & equations);
+
+
+	//************************************
+	// Function:  Checking if matrix is a symmetrical
+	// Returns:    bool value
+	// Parameter:   double array (all matrix value)  
+	//************************************
+	bool isSymmetrical();    // break inside that function let's check + troubles with *
 };
 
