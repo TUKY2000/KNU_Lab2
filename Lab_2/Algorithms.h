@@ -22,7 +22,6 @@ public:
 
 private:
 
-	CMatrix * turnMatr = nullptr; // I need that for Jakobi. Ivan . 
 
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
@@ -97,7 +96,7 @@ private:
 	//			!!! Warning that function changing matrix !!! 
 	//  
 	//************************************
-	// double turnMatrix(double **solution);
+	std::vector<double> JakobiMethod();
 
 
 

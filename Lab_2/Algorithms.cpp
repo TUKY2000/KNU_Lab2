@@ -158,158 +158,156 @@ bool CAlgorithms::isSymmetrical() // maybe ,istake with parameter
 }
 
 // Jakobi
-/*
-double CAlgorithms::turnMatrix(double **solution)
+
+std::vector<double> CAlgorithms::JakobiMethod()
 {
+	CMatrix * turnMatr = nullptr;
+	std::vector<double> res;
 	double precision = 0.000004; // than we will changed that and precision will become parametr from user 
-	int result = 1;
-	int i, j, k;
-	int maxI, maxJ;
+	size_t row, col, k;
+	size_t maxRow, maxCol;
 	double max, fi;
-	turnMatr[matr->getCols]; // some problems here
-	for (i = 0; i < matr->getCols*matr->getRows; i++) 
+	turnMatr[matr->getCols()]; // some problems here
+	for (row = 0; row < (matr->getCols())*(matr->getRows()); row++) 
 	{
-		turnMatr[i] = matr[i]; // Fuck that shit. I'm coping matr here for first stap cause in MVS2012 alghoritm some bullshit here
+		turnMatr[row] = matr[row]; // Fuck that shit. I'm coping matr here for first stap cause in MVS2012 alghoritm some bullshit here
 		/*
 		double** matricaPoworota;
 matricaPoworota = new double*[numberOfEquation];
 for ( i = 0; i < numberOfEquation; i ++ ) {
 matricaPoworota[i] = new double[numberOfEquation];}
 		*/
-/*
+
 	}
-	double * temp;
-	temp = matr;
-	for (i = 0; i < matr->getCols; i++) 
+	CMatrix * temp = nullptr;
+	temp = new CMatrix(*matr);
+	for (row = 0; row < matr->getCols(); row++) 
 	{
-		turnMatr[i] = matr[i]; //temp[i] = new double[matr->getCols];
+		turnMatr[row] = matr[row]; //temp[i] = new double[matr->getCols];
 	}
 	double fault = 0.0;
-	for (i = 0; i < matr->getCols; i++) 
+	for (row = 0; row < matr->getCols(); row++) 
 	{
-		for (j = i + 1; j < matr->getCols; j++) 
+		for (col = row + 1; col < matr->getCols(); col++) 
 		{
-			fault = fault + *matr[i][j] * *matr[i][j];
+			fault = fault + (*matr)[row][col] * (*matr)[row][col];
 		}
 	}
 	fault = sqrt(2 * fault);
 	while (fault > precision) {
 		max = 0.0;
 		// Searching max.
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = i + 1; j < matr->getCols; j++) 
+			for (col = row + 1; col < matr->getCols(); col++) 
 			{
-				if (*matr[i][j] > 0 && *matr[i][j] > max) 
+				if ((*matr)[row][col] > 0 && (*matr)[row][col] > max) 
 				{
-					max = *matr[i][j];
-					maxI = i;
-					maxJ = j;
+					max = (*matr)[row][col];
+					maxRow = row;
+					maxCol = col;
 				}
-				else if (*matr[i][j] < 0 && -*matr[i][j] > max) 
+				else if ((*matr)[row][col] < 0 && - (*matr)[row][col] > max) 
 				{
-					max = -*matr[i][j];
-					maxI = i;
-					maxJ = j;
+					max = -(*matr)[row][col];
+					maxRow = row;
+					maxCol = col;
 				}
 			}
 		}
 		// zanylyaemo
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				*turnMatr[i][j] = 0;
+				*turnMatr[row][col] = 0;
 			}
-			*turnMatr[i][i] = 1;
+			*turnMatr[row][row] = 1;
 		}
 		// turn 
-		if (*matr[maxI][maxI] == *matr[maxJ][maxJ]) 
+		if ((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol]) 
 		{
-			*turnMatr[maxI][maxI] = *turnMatr[maxJ][maxJ] =
-				*turnMatr[maxJ][maxI] = sqrt(2.0) / 2.0;
-			*turnMatr[maxI][maxJ] = -sqrt(2.0) / 2.0;
+			*turnMatr[maxRow][maxRow] = *turnMatr[maxCol][maxCol] =
+				*turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
+			*turnMatr[maxRow][maxCol] = -sqrt(2.0) / 2.0;
 		}
 		else 
 		{
-			fi = 0.5 * atan((2.0 * *matr[maxI][maxJ]) /
-				(*matr[maxI][maxI] - *matr[maxJ][maxJ]));
-			*turnMatr[maxI][maxI] = *turnMatr[maxJ][maxJ] = cos(fi);
-			*turnMatr[maxI][maxJ] = -sin(fi);
-			*turnMatr[maxJ][maxI] = sin(fi);
+			fi = 0.5 * atan((2.0 * (*matr)[maxRow][maxCol]) /
+				((*matr)[maxRow][maxRow] - (*matr)[maxCol][maxCol]));
+			*turnMatr[maxRow][maxRow] = *turnMatr[maxCol][maxCol] = cos(fi);
+			*turnMatr[maxRow][maxCol] = -sin(fi);
+			*turnMatr[maxCol][maxRow] = sin(fi);
 		}
-		for (i = 0; i < *matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < *matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				temp[i][j] = 0.0;
+				*temp[row][col] = 0.0;
 			}
 		}
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				for (k = 0; k < matr->getCols; k++) 
+				for (k = 0; k < matr->getCols(); k++) 
 				{
-					temp[i][j] = temp[i][j] + *turnMatr[k][i] * *matr[k][j];
+					*temp[row][col] = *temp[row][col] + *turnMatr[k][row] * (*matr)[k][col];
 				}
 			}
 		}
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				*matr[i][j] = 0.0;
+				(*matr)[row][col] = 0.0;
 			}
 		}
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				for (k = 0; k < matr->getCols; k++) 
+				for (k = 0; k < matr->getCols(); k++) 
 				{
-					*matr[i][j] = *matr[i][j] +
-						temp[i][k] * *turnMatr[k][j];
+					(*matr)[row][col] = (*matr)[row][col] +
+					(*temp)[row][k] * (*turnMatr)[k][col];
 				}
 			}
 		}
 		fault = 0.0;
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = i + 1; j < matr->getCols; j++) 
+			for (col = row + 1; col < matr->getCols(); col++) 
 			{
-				fault = fault + *matr[i][j] * *matr[i][j];
+				fault = fault + (*matr)[row][col] * (*matr)[row][col];
 			}
 		}
 		fault = sqrt(2 * fault);
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				temp[i][j] = 0.0;
+				(*temp)[row][col] = 0.0;
 			}
 		}
-		for (i = 0; i < matr->getCols; i++) 
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for (j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				for (k = 0; k < matr->getCols; k++) 
+				for (k = 0; k < matr->getCols(); k++) 
 				{
-					temp[i][j] = temp[i][j] + solution[i][k] * *turnMatr[k][j];
+					(*temp)[row][col] = (*temp)[row][col] + res[row] * *turnMatr[k][col]; // res[row] {k} was hear let's check out wtf is that, it can be some mistakes here.
 				}
 			}
 		}
-		for (i = 0; i < matr->getCols; i++) 
+		// inpput solution values in array
+		for (row = 0; row < matr->getCols(); row++) 
 		{
-			for ( j = 0; j < matr->getCols; j++) 
+			for (col = 0; col < matr->getCols(); col++) 
 			{
-				solution[i][j] = temp[i][j];
+				res.push_back((*matr)[row][col]);
 			}
 		}
-		result++;
 	}
-	return result;
+	return res;
 }
-
-
-*/

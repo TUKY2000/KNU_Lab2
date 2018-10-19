@@ -82,7 +82,8 @@ int main()
 	return input;
 	*/
 	
-	system("pause");
+	cout << " Succesfully complete that bullshit!!!!" << endl;
+	system("pause"); 
 	return 0;
 }
 
