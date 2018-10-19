@@ -134,3 +134,182 @@ std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equati
 	return res;
 }
 
+// Jakobi
+
+bool CAlgorithms::isSymmetrical() // maybe ,istake with parameter 
+{
+	bool result;
+	//size_t cols = matr->getCols;
+	for (size_t col = 0; col < matr->getCols(); col++)
+	{
+		for (size_t row = col; row < matr->getRows() - col; row++)
+		{
+			if ((*matr)[col][row] != (*matr)[row][col])
+			{
+				result = false;
+																// Bullshit with *
+				break;
+			}
+		}
+	}
+
+
+	return result;
+}
+
+// Jakobi
+/*
+double CAlgorithms::turnMatrix(double **solution)
+{
+	double precision = 0.000004; // than we will changed that and precision will become parametr from user 
+	int result = 1;
+	int i, j, k;
+	int maxI, maxJ;
+	double max, fi;
+	turnMatr[matr->getCols]; // some problems here
+	for (i = 0; i < matr->getCols*matr->getRows; i++) 
+	{
+		turnMatr[i] = matr[i]; // Fuck that shit. I'm coping matr here for first stap cause in MVS2012 alghoritm some bullshit here
+		/*
+		double** matricaPoworota;
+matricaPoworota = new double*[numberOfEquation];
+for ( i = 0; i < numberOfEquation; i ++ ) {
+matricaPoworota[i] = new double[numberOfEquation];}
+		*/
+/*
+	}
+	double * temp;
+	temp = matr;
+	for (i = 0; i < matr->getCols; i++) 
+	{
+		turnMatr[i] = matr[i]; //temp[i] = new double[matr->getCols];
+	}
+	double fault = 0.0;
+	for (i = 0; i < matr->getCols; i++) 
+	{
+		for (j = i + 1; j < matr->getCols; j++) 
+		{
+			fault = fault + *matr[i][j] * *matr[i][j];
+		}
+	}
+	fault = sqrt(2 * fault);
+	while (fault > precision) {
+		max = 0.0;
+		// Searching max.
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = i + 1; j < matr->getCols; j++) 
+			{
+				if (*matr[i][j] > 0 && *matr[i][j] > max) 
+				{
+					max = *matr[i][j];
+					maxI = i;
+					maxJ = j;
+				}
+				else if (*matr[i][j] < 0 && -*matr[i][j] > max) 
+				{
+					max = -*matr[i][j];
+					maxI = i;
+					maxJ = j;
+				}
+			}
+		}
+		// zanylyaemo
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				*turnMatr[i][j] = 0;
+			}
+			*turnMatr[i][i] = 1;
+		}
+		// turn 
+		if (*matr[maxI][maxI] == *matr[maxJ][maxJ]) 
+		{
+			*turnMatr[maxI][maxI] = *turnMatr[maxJ][maxJ] =
+				*turnMatr[maxJ][maxI] = sqrt(2.0) / 2.0;
+			*turnMatr[maxI][maxJ] = -sqrt(2.0) / 2.0;
+		}
+		else 
+		{
+			fi = 0.5 * atan((2.0 * *matr[maxI][maxJ]) /
+				(*matr[maxI][maxI] - *matr[maxJ][maxJ]));
+			*turnMatr[maxI][maxI] = *turnMatr[maxJ][maxJ] = cos(fi);
+			*turnMatr[maxI][maxJ] = -sin(fi);
+			*turnMatr[maxJ][maxI] = sin(fi);
+		}
+		for (i = 0; i < *matr->getCols; i++) 
+		{
+			for (j = 0; j < *matr->getCols; j++) 
+			{
+				temp[i][j] = 0.0;
+			}
+		}
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				for (k = 0; k < matr->getCols; k++) 
+				{
+					temp[i][j] = temp[i][j] + *turnMatr[k][i] * *matr[k][j];
+				}
+			}
+		}
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				*matr[i][j] = 0.0;
+			}
+		}
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				for (k = 0; k < matr->getCols; k++) 
+				{
+					*matr[i][j] = *matr[i][j] +
+						temp[i][k] * *turnMatr[k][j];
+				}
+			}
+		}
+		fault = 0.0;
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = i + 1; j < matr->getCols; j++) 
+			{
+				fault = fault + *matr[i][j] * *matr[i][j];
+			}
+		}
+		fault = sqrt(2 * fault);
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				temp[i][j] = 0.0;
+			}
+		}
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for (j = 0; j < matr->getCols; j++) 
+			{
+				for (k = 0; k < matr->getCols; k++) 
+				{
+					temp[i][j] = temp[i][j] + solution[i][k] * *turnMatr[k][j];
+				}
+			}
+		}
+		for (i = 0; i < matr->getCols; i++) 
+		{
+			for ( j = 0; j < matr->getCols; j++) 
+			{
+				solution[i][j] = temp[i][j];
+			}
+		}
+		result++;
+	}
+	return result;
+}
+
+
+*/
