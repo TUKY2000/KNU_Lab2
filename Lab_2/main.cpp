@@ -1,11 +1,12 @@
 #include "Matrix.h"
+
 #include <iostream>
 using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //																								//
 //	to do list																					//
-//	1) need to add variant for random values inputing in matrix 	 							//
+//	1) need to add variant for random values inputing in matrix added 							//
 //	2) need to add realization for diferent methods	(add Enum, add user interface				//
 //	3)exceptions																				//
 //	4) copyright																				//

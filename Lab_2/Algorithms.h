@@ -90,15 +90,22 @@ private:
 
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
-	// Returns:		return new massive of own values !!!!! will change that !!!!!!				!!! Warning that function changing matrix !!! 
+	// Returns:		return new massive of own values !!!!! will change that !!!!!!				!!! Warning that function can change the matrix !!! 
 	// Parameter:	double array (all matrix value).We will add precision as parametr
 	//
 	//			!!! Warning that function changing matrix !!! 
 	//  
 	//************************************
-	std::vector<double> JakobiMethod();
+	bool JakobiMethod();
 
 
+	bool JakobiFindMax(double max, size_t col, size_t row, size_t maxRow, size_t maxCol);
+
+	bool turnMatrToNull(size_t row, size_t col, CMatrix &turnMatr);
+
+	bool JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t maxCol, CMatrix &turnMatr);
+
+	bool JakobiSolution(std::vector<double> res, size_t row, size_t col);
 
 };
 

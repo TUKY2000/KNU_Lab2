@@ -147,7 +147,6 @@ bool CAlgorithms::isSymmetrical() // maybe ,istake with parameter
 			if ((*matr)[col][row] != (*matr)[row][col])
 			{
 				result = false;
-																// Bullshit with *
 				break;
 			}
 		}
@@ -159,32 +158,16 @@ bool CAlgorithms::isSymmetrical() // maybe ,istake with parameter
 
 // Jakobi
 
-std::vector<double> CAlgorithms::JakobiMethod()
+bool CAlgorithms::JakobiMethod()
 {
+	bool JakobiMethod = false;
 	CMatrix * turnMatr = nullptr;
 	std::vector<double> res;
 	double precision = 0.000004; // than we will changed that and precision will become parametr from user 
-	size_t row, col, k;
-	size_t maxRow, maxCol;
-	double max, fi;
-	turnMatr[matr->getCols()]; // some problems here
-	for (row = 0; row < (matr->getCols())*(matr->getRows()); row++) 
-	{
-		turnMatr[row] = matr[row]; // Fuck that shit. I'm coping matr here for first stap cause in MVS2012 alghoritm some bullshit here
-		/*
-		double** matricaPoworota;
-matricaPoworota = new double*[numberOfEquation];
-for ( i = 0; i < numberOfEquation; i ++ ) {
-matricaPoworota[i] = new double[numberOfEquation];}
-		*/
-
-	}
-	CMatrix * temp = nullptr;
-	temp = new CMatrix(*matr);
-	for (row = 0; row < matr->getCols(); row++) 
-	{
-		turnMatr[row] = matr[row]; //temp[i] = new double[matr->getCols];
-	}
+	size_t row, col;
+	size_t maxRow = matr-> getRows(), maxCol = matr ->getCols();
+	double max = 0.0;
+	turnMatr = new CMatrix(*matr);;
 	double fault = 0.0;
 	for (row = 0; row < matr->getCols(); row++) 
 	{
@@ -194,20 +177,61 @@ matricaPoworota[i] = new double[numberOfEquation];}
 		}
 	}
 	fault = sqrt(2 * fault);
-	while (fault > precision) {
-		max = 0.0;
+	while (fault > precision) 
+	{
 		// Searching max.
-		for (row = 0; row < matr->getCols(); row++) 
+		if (!JakobiFindMax(max, col, row, maxRow, maxCol))
 		{
-			for (col = row + 1; col < matr->getCols(); col++) 
+			// throw
+			return JakobiMethod;
+			break;
+		}
+	
+		// zanylyaemo
+		if (!turnMatrToNull(row, col, *turnMatr))
+		{
+			// throw
+			return JakobiMethod;
+			break;
+		}
+		
+		// turn 
+		if (!JakobiTurnMatrix( row, col, maxRow, maxCol, *turnMatr))
+		{
+			// throw
+			return JakobiMethod;
+			break;
+		}
+
+		// inpput solution values in array
+		if (!JakobiSolution(res, row, col))
+		{
+			// throw
+			return JakobiMethod;
+			break;
+		}
+	}
+	
+	// cout << JakobiSolution(); // res vector
+	JakobiMethod = true;
+	return JakobiMethod;
+}
+
+bool CAlgorithms::JakobiFindMax( double max, size_t col, size_t row, size_t maxRow, size_t maxCol)
+{
+	bool JakobiFindMax = false;
+		max = 0.0;
+		for (row = 0; row < matr->getCols(); row++)
+		{
+			for (col = row + 1; col < matr->getCols(); col++)
 			{
-				if ((*matr)[row][col] > 0 && (*matr)[row][col] > max) 
+				if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
 				{
 					max = (*matr)[row][col];
 					maxRow = row;
 					maxCol = col;
 				}
-				else if ((*matr)[row][col] < 0 && - (*matr)[row][col] > max) 
+				else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
 				{
 					max = -(*matr)[row][col];
 					maxRow = row;
@@ -215,99 +239,122 @@ matricaPoworota[i] = new double[numberOfEquation];}
 				}
 			}
 		}
-		// zanylyaemo
-		for (row = 0; row < matr->getCols(); row++) 
+
+		JakobiFindMax = true;
+
+	return JakobiFindMax;
+}
+
+bool CAlgorithms::JakobiSolution(std::vector<double> res, size_t row, size_t col)
+{
+	bool JakobiSolution = false;
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
 		{
-			for (col = 0; col < matr->getCols(); col++) 
+			res.push_back((*matr)[row][col]);
+		}
+	}
+	JakobiSolution = true;
+	return JakobiSolution;
+}
+
+bool CAlgorithms::turnMatrToNull(size_t row, size_t col, CMatrix &turnMatr)
+{
+	bool res = false;
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			turnMatr[row][col] = 0;
+		}
+		turnMatr[row][row] = 1;
+	}
+	return true;
+}
+
+bool CAlgorithms::JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t maxCol, CMatrix &turnMatr)
+{
+	bool JakobiTurnMatrix = false;
+	double fi;
+	CMatrix * temp = nullptr;
+	temp = new CMatrix(*matr);
+	if ((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol])
+	{
+		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] =
+			turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
+		turnMatr[maxRow][maxCol] = -sqrt(2.0) / 2.0;
+	}
+	else
+	{
+		fi = 0.5 * atan((2.0 * (*matr)[maxRow][maxCol]) /
+			((*matr)[maxRow][maxRow] - (*matr)[maxCol][maxCol]));
+		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] = cos(fi);
+		turnMatr[maxRow][maxCol] = -sin(fi);
+		turnMatr[maxCol][maxRow] = sin(fi);
+	}
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			*temp[row][col] = 0.0;
+		}
+	}
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
 			{
-				*turnMatr[row][col] = 0;
-			}
-			*turnMatr[row][row] = 1;
-		}
-		// turn 
-		if ((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol]) 
-		{
-			*turnMatr[maxRow][maxRow] = *turnMatr[maxCol][maxCol] =
-				*turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
-			*turnMatr[maxRow][maxCol] = -sqrt(2.0) / 2.0;
-		}
-		else 
-		{
-			fi = 0.5 * atan((2.0 * (*matr)[maxRow][maxCol]) /
-				((*matr)[maxRow][maxRow] - (*matr)[maxCol][maxCol]));
-			*turnMatr[maxRow][maxRow] = *turnMatr[maxCol][maxCol] = cos(fi);
-			*turnMatr[maxRow][maxCol] = -sin(fi);
-			*turnMatr[maxCol][maxRow] = sin(fi);
-		}
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				*temp[row][col] = 0.0;
-			}
-		}
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				for (k = 0; k < matr->getCols(); k++) 
-				{
-					*temp[row][col] = *temp[row][col] + *turnMatr[k][row] * (*matr)[k][col];
-				}
-			}
-		}
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				(*matr)[row][col] = 0.0;
-			}
-		}
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				for (k = 0; k < matr->getCols(); k++) 
-				{
-					(*matr)[row][col] = (*matr)[row][col] +
-					(*temp)[row][k] * (*turnMatr)[k][col];
-				}
-			}
-		}
-		fault = 0.0;
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = row + 1; col < matr->getCols(); col++) 
-			{
-				fault = fault + (*matr)[row][col] * (*matr)[row][col];
-			}
-		}
-		fault = sqrt(2 * fault);
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				(*temp)[row][col] = 0.0;
-			}
-		}
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				for (k = 0; k < matr->getCols(); k++) 
-				{
-					(*temp)[row][col] = (*temp)[row][col] + res[row] * *turnMatr[k][col]; // res[row] {k} was hear let's check out wtf is that, it can be some mistakes here.
-				}
-			}
-		}
-		// inpput solution values in array
-		for (row = 0; row < matr->getCols(); row++) 
-		{
-			for (col = 0; col < matr->getCols(); col++) 
-			{
-				res.push_back((*matr)[row][col]);
+				*temp[row][col] = *temp[row][col] + turnMatr[k][row] * (*matr)[k][col];
 			}
 		}
 	}
-	return res;
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			(*matr)[row][col] = 0.0;
+		}
+	}
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
+			{
+				(*matr)[row][col] = (*matr)[row][col] +
+					(*temp)[row][k] * turnMatr[k][col];
+			}
+		}
+	}
+	double fault = 0.0;
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = row + 1; col < matr->getCols(); col++)
+		{
+			fault = fault + (*matr)[row][col] * (*matr)[row][col];
+		}
+	}
+	fault = sqrt(2 * fault);
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			(*temp)[row][col] = 0.0;
+		}
+	}
+	for (row = 0; row < matr->getCols(); row++)
+	{
+		for (col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
+			{
+				(*temp)[row][col] = (*temp)[row][col] + turnMatr[k][row] * turnMatr[k][col]; // res[row][k] was hear let's check out wtf is that, it can be some mistakes here.
+			}
+		}
+	}
+	if (temp!= nullptr) delete temp;
+	JakobiTurnMatrix = true;
+	return JakobiTurnMatrix;
 }
