@@ -38,11 +38,13 @@ unsigned int CAlgorithms::directElimination()
 {
 	size_t index = 0;
 	unsigned int next = index;
-		for (; index < matr->getRows(); ++index)	
+	unsigned const int iters = matr->getRows() - 1;
+	std::pair<unsigned int, double> maxInCol;
+	for (; index < iters; ++index)	
 	{
 		if (!empty(index))
 		{
-			std::pair<unsigned const int, double> maxInCol = findMax(index);
+			maxInCol = findMax(index);
 			swap(maxInCol.first, next);
 			std::cout << std::endl << *matr;
 			normalize(next, maxInCol.second);
@@ -51,8 +53,14 @@ unsigned int CAlgorithms::directElimination()
 			std::cout << std::endl << *matr;
 				++next;
 		}
+		else
+		{
+			throw std::logic_error("System of equations has not solution.");
+		}
 	}
-	normalize(next, index);
+	maxInCol = findMax(index);
+	normalize(next, maxInCol.second);
+	std::cout << std::endl << *matr;
 
 	return next;
 }
@@ -60,21 +68,21 @@ unsigned int CAlgorithms::directElimination()
 std::pair<unsigned const int, double> CAlgorithms::findMax(const int & col) const
 {
 	size_t row = col;
-	double maximum = abs((*matr)[row++][col]),
+	unsigned int res = row;
+	double maximum = (*matr)[row++][col],
 		buffer = 0;
 		
-	unsigned int res = 0;
+	
 
 	for (; row < matr->getRows(); ++row)
 	{
-		buffer = abs((*matr)[row][col]);
-		if (maximum < buffer)	
+		buffer = (*matr)[row][col];
+		if (abs(maximum) < abs(buffer))	
 		{
 			maximum = buffer;
 			res = row;
 		}
 	}
-
 	return std::make_pair(res, maximum);
 }	
 
@@ -93,7 +101,7 @@ void CAlgorithms::swap(const int & row1, const int & row2)
 	}
 }
 
-void CAlgorithms::normalize(unsigned const int & ROW, const int & elem)
+void CAlgorithms::normalize(unsigned const int & ROW, const double & elem)
 {
 	for (size_t col = 0; col < matr->getCols(); col++)
 	{
@@ -101,16 +109,16 @@ void CAlgorithms::normalize(unsigned const int & ROW, const int & elem)
 	}
 }
 
-void CAlgorithms::subtraction(unsigned int row)
+void CAlgorithms::subtraction(unsigned int ROW)
 {
-	size_t col = 0;
-	for (; row < matr->getRows(); ++row)
+	size_t col = ROW;
+	for (size_t row = ROW + 1; row < matr->getRows(); ++row)
 	{
-		col = row;
-		double koef = (*matr)[row + 1][col];
+		col = ROW;
+		double koef = (*matr)[row][col];
 		for (; col < matr->getCols(); ++col)
 		{
-			(*matr)[row + 1][col] -= (*matr)[row][col] * koef;
+			(*matr)[row][col] -= (*matr)[ROW][col] * koef;
 		}
 	}
 }
@@ -120,7 +128,7 @@ bool CAlgorithms::empty(const unsigned int & row) const
 	bool res = true;
 	for (size_t col = 0; col < matr->getCols(); ++col)
 	{
-		if (matr[row][col] != 0)
+		if ((*matr)[row][col] != 0)
 		{
 			if (col == matr->getCols())
 				break;
@@ -135,17 +143,25 @@ bool CAlgorithms::empty(const unsigned int & row) const
 std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equations)
 {
 	std::vector<double>res/*(equations)*/;
-	
-	for (int indx = matr->getCols() - 1; indx > 0; --indx)
-	{
-		int row = indx - 1;
-		res.push_back((*matr)[row][matr->getCols()]);
-		for (; row >= 0; --row)
-		{
-			(*matr)[row][matr->getCols()] -= (*matr)[row + 1][matr->getCols()] * ((*matr)[row][indx]);
-		}
-	}
+	double Ai_lead
+		, koef;
 
+	unsigned int rowLead = matr->getRows() - 1;
+
+	for (int col = matr->getCols() - 2; col >= 0;--col)
+	{ 
+		Ai_lead = (*matr)[rowLead][matr->getCols() - 1];
+		res.push_back(Ai_lead);
+		for (int row = rowLead; row > 0; --row)
+		{
+			koef = (*matr)[row - 1][col];
+			(*matr)[row - 1][matr->getCols() - 1] -= koef * Ai_lead;
+			(*matr)[row - 1][col] -= koef * (*matr)[row][col];
+		}
+		--rowLead;
+		std::cout << *matr << std::endl;
+	}
+	
 	return res;
 }
 

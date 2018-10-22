@@ -21,15 +21,16 @@ int main()
 	cout << *m;
 	//	test Gaussian method
 
-	CAlgorithms * gaussTest = nullptr;
+	CAlgorithms * gaussTest = nullptr;	
 	gaussTest = new CAlgorithms(*m);
 
 	std::vector<double> x = gaussTest->GaussianElimination();
-	
+	cout << endl << "ANSWER: (";
 	for (vector<double>::iterator ITER = x.begin(); ITER < x.end(); ++ITER)
 	{
 		cout << *ITER << " ";
 	}
+	cout << ")" << endl;
 
 	if (m != nullptr)	delete m;
 	if (gaussTest != nullptr)	delete gaussTest;

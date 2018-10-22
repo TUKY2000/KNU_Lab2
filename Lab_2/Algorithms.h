@@ -64,7 +64,7 @@ private:
 	// Returns:		void
 	// Parameter:	number of row of the leading element, number of col of the leading element
 	//************************************
-	void normalize(unsigned const int & row, const int & element);
+	void normalize(unsigned const int & row, const double & element);
 
 	//************************************
 	// Function:	nullifier all elements below in column of the leading element by subtraction of rows
