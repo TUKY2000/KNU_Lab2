@@ -35,6 +35,7 @@ int main()
 	if (m != nullptr)	delete m;
 	if (gaussTest != nullptr)	delete gaussTest;
 
+
 	system("pause");
 	return 0;
 }
