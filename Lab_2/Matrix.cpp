@@ -95,7 +95,7 @@ bool CMatrix::operator==(const CMatrix & other) const
 CMatrix & CMatrix::operator+(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
-		throw std::logic_error("");
+		throw std::logic_error("");	
 
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)

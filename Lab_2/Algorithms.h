@@ -20,7 +20,7 @@ public:
 	// Returns:		vector   
 	// Parameter:	void
 	//************************************
-	std::vector<double> GaussianElimination();
+	CMatrix GaussianElimination();
 
 
 	//************************************
@@ -85,7 +85,7 @@ private:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	std::vector<double> reverseSubstitution(const unsigned int & equations);
+	CMatrix reverseSubstitution();
 
 
 	//************************************

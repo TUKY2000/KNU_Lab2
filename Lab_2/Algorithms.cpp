@@ -28,10 +28,10 @@ CAlgorithms::~CAlgorithms()
 }
 
 
-std::vector<double> CAlgorithms::GaussianElimination()
+CMatrix CAlgorithms::GaussianElimination()
 {
 	unsigned int equations = directElimination();
-	return reverseSubstitution(equations);
+	return reverseSubstitution();
 }
 
 unsigned int CAlgorithms::directElimination()
@@ -140,9 +140,9 @@ bool CAlgorithms::empty(const unsigned int & row) const
 	return res;
 }
 
-std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equations)
+CMatrix CAlgorithms::reverseSubstitution()
 {
-	std::vector<double>res/*(equations)*/;
+	CMatrix res(1, matr->getCols() - 1);
 	double Ai_lead
 		, koef;
 
@@ -151,7 +151,7 @@ std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equati
 	for (int col = matr->getCols() - 2; col >= 0;--col)
 	{ 
 		Ai_lead = (*matr)[rowLead][matr->getCols() - 1];
-		res.push_back(Ai_lead);
+		res[0][col] = Ai_lead;
 		for (int row = rowLead; row > 0; --row)
 		{
 			koef = (*matr)[row - 1][col];

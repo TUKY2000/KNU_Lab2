@@ -24,13 +24,8 @@ int main()
 	CAlgorithms * gaussTest = nullptr;	
 	gaussTest = new CAlgorithms(*m);
 
-	std::vector<double> x = gaussTest->GaussianElimination();
-	cout << endl << "ANSWER: (";
-	for (vector<double>::iterator ITER = x.begin(); ITER < x.end(); ++ITER)
-	{
-		cout << *ITER << " ";
-	}
-	cout << ")" << endl;
+	*m = gaussTest->GaussianElimination();
+	cout << endl << "ANSWER: (" << *m << ")" << endl;
 
 	if (m != nullptr)	delete m;
 	if (gaussTest != nullptr)	delete gaussTest;
