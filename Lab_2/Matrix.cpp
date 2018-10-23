@@ -50,8 +50,8 @@ void CMatrix::create()
 
 	matr = new double [rows * cols];
 }
-// added for Jakobi method  exactly for randomMatrixValues
 
+// added for Jakobi method  exactly for symmetricalrandomMatrixValues
 int rand1(int & a)
 {
 	a = (28 * a + 76) % m;

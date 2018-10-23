@@ -98,13 +98,32 @@ private:
 	//************************************
 	bool JakobiMethod();
 
+	//***************************************************
+	// Function:	Searching max element that not on the diag
+	// Returns:		bool value if function done or not
+	// Parameter:	double array (all matrix value)  
+	//***************************************************
+	bool JakobiFindMax(double max, size_t col, size_t row, size_t &maxRow, size_t &maxCol);
+	
+	//***************************************************
+	// Function:	prepare Turn matrix for the next iteration
+	// Returns:		bool value if function done or not
+	// Parameter:	row, col, matrix turnMatr, all of them Inicianalizate in bool JakoniMethod(); 
+	//***************************************************
+	bool prepareTurnMatr(size_t row, size_t col, CMatrix &turnMatr);
 
-	bool JakobiFindMax(double max, size_t col, size_t row, size_t maxRow, size_t maxCol);
-
-	bool turnMatrToNull(size_t row, size_t col, CMatrix &turnMatr);
-
+	//***************************************************
+	// Function:	turn matrix 
+	// Returns:		bool value if function done or not
+	// Parameter:	double array (all matrix value)  
+	//***************************************************
 	bool JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t maxCol, CMatrix &turnMatr);
 
+	//***************************************************
+	// Function:	input solution in vector res 
+	// Returns:		bool value if function done or not
+	// Parameter:	double array (all matrix value)  
+	//***************************************************
 	bool JakobiSolution(std::vector<double> res, size_t row, size_t col);
 
 };

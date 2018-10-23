@@ -169,6 +169,7 @@ bool CAlgorithms::JakobiMethod()
 	double max = 0.0;
 	turnMatr = new CMatrix(*matr);;
 	double fault = 0.0;
+	// add to while 
 	for (row = 0; row < matr->getCols(); row++) 
 	{
 		for (col = row + 1; col < matr->getCols(); col++) 
@@ -176,7 +177,6 @@ bool CAlgorithms::JakobiMethod()
 			fault = fault + (*matr)[row][col] * (*matr)[row][col];
 		}
 	}
-	fault = sqrt(2 * fault);
 	while (fault > precision) 
 	{
 		// Searching max.
@@ -188,7 +188,7 @@ bool CAlgorithms::JakobiMethod()
 		}
 	
 		// zanylyaemo
-		if (!turnMatrToNull(row, col, *turnMatr))
+		if (!prepareTurnMatr(row, col, *turnMatr))
 		{
 			// throw
 			return JakobiMethod;
@@ -202,22 +202,20 @@ bool CAlgorithms::JakobiMethod()
 			return JakobiMethod;
 			break;
 		}
-
-		// inpput solution values in array
-		if (!JakobiSolution(res, row, col))
-		{
-			// throw
-			return JakobiMethod;
-			break;
-		}
 	}
-	
+	// inpput solution values in array
+	if (!JakobiSolution(res, row, col))
+	{
+		// throw
+		return JakobiMethod;
+	}
 	// cout << JakobiSolution(); // res vector
 	JakobiMethod = true;
 	return JakobiMethod;
 }
 
-bool CAlgorithms::JakobiFindMax( double max, size_t col, size_t row, size_t maxRow, size_t maxCol)
+// check architecture
+bool CAlgorithms::JakobiFindMax( double max, size_t col, size_t row, size_t &maxRow, size_t &maxCol)
 {
 	bool JakobiFindMax = false;
 		max = 0.0;
@@ -245,6 +243,7 @@ bool CAlgorithms::JakobiFindMax( double max, size_t col, size_t row, size_t maxR
 	return JakobiFindMax;
 }
 
+// change vector to matrix 1*n
 bool CAlgorithms::JakobiSolution(std::vector<double> res, size_t row, size_t col)
 {
 	bool JakobiSolution = false;
@@ -259,7 +258,7 @@ bool CAlgorithms::JakobiSolution(std::vector<double> res, size_t row, size_t col
 	return JakobiSolution;
 }
 
-bool CAlgorithms::turnMatrToNull(size_t row, size_t col, CMatrix &turnMatr)
+bool CAlgorithms::prepareTurnMatr(size_t row, size_t col, CMatrix &turnMatr)
 {
 	bool res = false;
 	for (row = 0; row < matr->getCols(); row++)
@@ -293,6 +292,7 @@ bool CAlgorithms::JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t
 		turnMatr[maxRow][maxCol] = -sin(fi);
 		turnMatr[maxCol][maxRow] = sin(fi);
 	}
+	// change to mul matrix ( both for) watch wiki
 	for (row = 0; row < matr->getCols(); row++)
 	{
 		for (col = 0; col < matr->getCols(); col++)
@@ -310,6 +310,7 @@ bool CAlgorithms::JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t
 			}
 		}
 	}
+	// change to mul matrix (both for) 
 	for (row = 0; row < matr->getCols(); row++)
 	{
 		for (col = 0; col < matr->getCols(); col++)
@@ -328,6 +329,7 @@ bool CAlgorithms::JakobiTurnMatrix(size_t row, size_t col, size_t maxRow, size_t
 			}
 		}
 	}
+	// Jakobi method fault
 	double fault = 0.0;
 	for (row = 0; row < matr->getCols(); row++)
 	{
