@@ -48,6 +48,29 @@ void CMatrix::create()
 	mass = new double[rows * cols];
 }
 
+// added for Jakobi method  exactly for symmetricalrandomMatrixValues
+int rand1(int & a)
+{
+	a = (28 * a + 76) % m;
+	return a;
+}
+// added for Jakobi method 
+void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
+{
+	int a = 48;
+	for (size_t col = 0; col < matr.getCols(); ++col)
+	{
+
+		for (size_t row = 0; row < matr.getRows() - col; ++row)
+		{
+			matr[col][row] = rand1(a);
+			matr[row][col] = matr[col][row];
+		}
+		
+	}
+
+}
+
 
 unsigned int const CMatrix::getRows() const
 {
