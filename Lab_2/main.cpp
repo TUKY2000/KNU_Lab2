@@ -3,6 +3,40 @@
 #include <iostream>
 using namespace std;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////// 
+// maybe we will input that in other file.
+enum Commands { outputMatrix = 1, GaussianElimination, Kachmage, Jakobi, linRegressParametr, finishWork } command;
+
+//************************************
+// Function:	convert from inputing char symbol to commandtype
+// Returns:		- 
+// Parameter:	-
+//************************************
+Commands inputCommand();
+
+//************************************
+// Function:	output all commands
+// Returns:		- 
+// Parameter:	-
+//************************************
+void printCommands();
+
+//************************************
+// Function:	do command (method) that user have choosen
+// Returns:		bool value that means is user still working with programm or not
+// Parameter:	command, matrix
+//************************************
+bool doCommand(Commands command, CMatrix &matr);
+
+//************************************
+// Function:	compare all functions do_co
+// Returns:		bool value that means is user still working with programm or not
+// Parameter:	command, matrix
+//************************************
+bool AnalysisSimulator(CMatrix &matr);
+///////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+
 int main()
 {
 	CMatrix *m = new CMatrix;

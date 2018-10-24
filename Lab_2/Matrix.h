@@ -38,7 +38,7 @@ public:
 	friend std::istream & operator >> (std::istream & input, CMatrix & matr);
 		
 	double	* operator [] (const int & row) const;
-
+	void randomMatrixValues(CMatrix matr);
 
 private:	
 

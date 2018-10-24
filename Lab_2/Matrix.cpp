@@ -71,6 +71,21 @@ void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
 
 }
 
+void CMatrix::randomMatrixValues(CMatrix matr)
+{
+	int a = 48;
+	for (size_t col = 0; col < matr.getCols(); ++col)
+	{
+
+		for (size_t row = 0; row < matr.getRows(); ++row)
+		{
+			matr[col][row] = rand1(a);
+		}
+
+	}
+
+}
+
 
 unsigned int const CMatrix::getRows() const
 {
