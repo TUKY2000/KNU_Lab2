@@ -74,6 +74,7 @@ int main()
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 
 // maybe we will that input in other files
 
+
 void GaussianElimination_(const CMatrix & m)
 {
 	CAlgorithms * gaussTest = nullptr;
