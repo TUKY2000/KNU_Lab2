@@ -8,7 +8,7 @@ using namespace std;
 enum Commands { outputMatrix = 1, GaussianElimination, Kachmage, Jakobi, linRegressParametr, finishWork } command;
 
 //************************************
-// Function:	convert from inputing char symbol to commandtype
+// Function:	convert from inputing char symbol to command type
 // Returns:		- 
 // Parameter:	-
 //************************************
@@ -22,15 +22,15 @@ Commands inputCommand();
 void printCommands();
 
 //************************************
-// Function:	do command (method) that user have choosen
-// Returns:		bool value that means is user still working with programm or not
+// Function:	do command (method) that user have chosen
+// Returns:		bool value that means is user still working with program or not
 // Parameter:	command, matrix
 //************************************
 bool doCommand(Commands command, CMatrix &matr);
 
 //************************************
 // Function:	compare all functions do_co
-// Returns:		bool value that means is user still working with programm or not
+// Returns:		bool value that means is user still working with program or not
 // Parameter:	command, matrix
 //************************************
 bool AnalysisSimulator(CMatrix &matr);
@@ -61,12 +61,9 @@ int main()
 	CAlgorithms * gaussTest = nullptr;	
 	gaussTest = new CAlgorithms(*m);
 
-	std::vector<double> x = gaussTest->GaussianElimination();
+	*m = gaussTest->GaussianElimination();
 	cout << endl << "ANSWER: (";
-	for (vector<double>::iterator ITER = x.begin(); ITER < x.end(); ++ITER)
-	{
-		cout << *ITER << " ";
-	}
+	cout << *m;
 	cout << ")" << endl;
 
 	if (m != nullptr)	delete m;
