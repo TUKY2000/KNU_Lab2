@@ -36,6 +36,9 @@ bool doCommand(Commands command, CMatrix &matr);
 bool AnalysisSimulator(CMatrix &matr);
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 
 
+void GaussianElimination_(const CMatrix & m);
+
+void JakobiMethod_(const CMatrix & m);
 
 int main()
 {
@@ -64,18 +67,12 @@ int main()
 	cin >> *m;
 	cout << *m;
 	//	test Gaussian method
-
-	CAlgorithms * gaussTest = nullptr;	
-	gaussTest = new CAlgorithms(*m);
-
-	*m = gaussTest->GaussianElimination();
-	cout << endl << "ANSWER: (";
-	cout << *m;
-	cout << ")" << endl;
-
+	if (m->isSymmetrical(*m))
+	{	
+		JakobiMethod_(*m);
+	}
+	else cout << " matrix isn't symetrical" << endl;
 	if (m != nullptr)	delete m;
-	if (gaussTest != nullptr)	delete gaussTest;
-
 
 	system("pause");
 	return 0;
@@ -83,6 +80,35 @@ int main()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 
 // maybe we will that input in other files
+
+
+void GaussianElimination_(const CMatrix & m)
+{
+	CAlgorithms * gaussTest = nullptr;
+	gaussTest = new CAlgorithms(m);
+
+	*m = gaussTest->GaussianElimination();
+	cout << endl << "ANSWER: (";
+	cout << *m;
+	cout << ")" << endl;
+	if (gaussTest != nullptr)	delete gaussTest;
+
+}
+void JakobiMethod_(const CMatrix & m)
+{
+	CAlgorithms * JakobiMethod = nullptr;
+	JakobiMethod = new CAlgorithms(m);
+
+	std::vector<double> res = JakobiMethod->JakobiMethod();
+	cout << endl << "ANSWER: (";
+	for (vector<double>::iterator ITER = res.begin(); ITER < res.end(); ++ITER)
+	{
+		cout << *ITER << " ";
+	}
+	cout << ")" << endl;
+	if (JakobiMethod != nullptr)	delete JakobiMethod;
+
+}
 
 Commands inputCommand()
 {
