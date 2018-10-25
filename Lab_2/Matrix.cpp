@@ -22,7 +22,7 @@ CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols, const double nu
 	, rows(_rows)
 {
 	create();
-	nulify();
+	setElemNum(num);
 }
 
 CMatrix::CMatrix(const CMatrix & other)
