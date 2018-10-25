@@ -17,6 +17,14 @@ CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols)
 	create();
 }
 
+CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols, const double num)
+	: cols(_cols)
+	, rows(_rows)
+{
+	create();
+	setElemNum(num);
+}
+
 CMatrix::CMatrix(const CMatrix & other)
 {
 	if (*this == other)
@@ -37,6 +45,7 @@ CMatrix::CMatrix(CMatrix && other)
 	}
 }
 
+
 CMatrix::~CMatrix()
 {
 	if (mass != nullptr)
@@ -46,6 +55,22 @@ CMatrix::~CMatrix()
 void CMatrix::create()
 {
 	mass = new double[rows * cols];
+}
+
+void CMatrix::nulify()
+{
+	setElemNum(0);
+}
+
+void CMatrix::setElemNum(const double num)
+{
+	for (size_t row = 0; row < rows; ++row)
+	{
+		for (size_t col = 0; col < cols; ++col)
+		{
+			(mass + row * cols)[col] = num;
+		}
+	}
 }
 
 // added for Jakobi method  exactly for symmetricalrandomMatrixValues
@@ -163,11 +188,11 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
 
-	CMatrix * matrNew = new CMatrix(this->rows, other.getCols());
+	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
 			for (size_t inner = 0; inner < this->cols; ++inner)
-				*matrNew[row][col] = (mass + row * rows)[inner] - other[inner][col];
+				*matrNew[row][col] += (mass + row * cols)[inner] * other[inner][col];
 
 	return *matrNew;
 }

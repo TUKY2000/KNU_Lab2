@@ -13,14 +13,25 @@ public:
 
 	void downlMatr(const CMatrix & _matr);
 
+	void downlMatr(const int & rows, const int & cols);
+
+
 	//void SoLEtoMATR(const std::istream & input);
 
 	//************************************
 	// Function:	solve the matrix by Gaussian method
-	// Returns:		vector   
+	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	std::vector<double> GaussianElimination();
+	CMatrix GaussianElimination();
+
+
+	//************************************
+	// Function:	find coefficients of the line function ................
+	// Returns:		CMatrix 
+	// Parameter:	void
+	//************************************
+	CMatrix LinRegression() const;
 
 	//************************************
 	// Function:	Doing all Jakobi method
@@ -28,6 +39,7 @@ public:
 	// Parameter:	
 	//************************************
 	std::vector<double>  JakobiMethod();
+  
 private:
 		
 	CMatrix * matr = nullptr;
@@ -80,14 +92,14 @@ private:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	std::vector<double> reverseSubstitution(const unsigned int & equations);
+	CMatrix reverseSubstitution(const unsigned int & equations);
 
 
 
 // Jakobi  part
 
 	//***************************************************
-	// Function:	Searching max element that not on the diag
+	// Function:	Searching max element that not on the diagonal
 	// Returns:		---
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
@@ -114,5 +126,15 @@ private:
 	//***************************************************
 	void JakobiSolution(std::vector<double> res);
 
+	//	Lineal Regression
+
+	double dispRow(const double && row) const;
+
+	double dispRows(const double && row1, const double && row2) const;
+
+	
+
 };
+
+
 

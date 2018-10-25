@@ -15,6 +15,7 @@ public:
 	CMatrix(const CMatrix & other);
 	CMatrix(CMatrix && other);
 	CMatrix(const unsigned int _rows, const unsigned _cols);
+	CMatrix(const unsigned int _rows, const unsigned _cols, const double num);
 
 	void setSize(const unsigned int _rows, const unsigned _cols);
 
@@ -51,7 +52,11 @@ private:
 
 	void create();	//	create massive of pointers-massive of pointers
 
-	void symmetricalRandomMatrixValues(CMatrix matr); // we are chanhing matr here
+	void nulify();
+
+	void setElemNum(const double num);
+
+	void symmetricalRandomMatrixValues(CMatrix matr); // we are changing matr here
 	
 	unsigned int cols
 		, rows;

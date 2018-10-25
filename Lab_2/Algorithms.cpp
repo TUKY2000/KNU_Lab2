@@ -18,6 +18,12 @@ void CAlgorithms::downlMatr(const CMatrix & _matr)
 	matr = new CMatrix(_matr);
 }
 
+void CAlgorithms::downlMatr(const int & rows, const int & cols)
+{
+	matr = new CMatrix(rows, cols);
+	std::cin >> *matr;
+}
+
 CAlgorithms::~CAlgorithms()
 {
 	if (matr != nullptr)
@@ -28,7 +34,7 @@ CAlgorithms::~CAlgorithms()
 }
 
 
-std::vector<double> CAlgorithms::GaussianElimination()
+CMatrix CAlgorithms::GaussianElimination()
 {
 	unsigned int equations = directElimination();
 	return reverseSubstitution(equations);
@@ -140,9 +146,9 @@ bool CAlgorithms::empty(const unsigned int & row) const
 	return res;
 }
 
-std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equations)
+CMatrix CAlgorithms::reverseSubstitution(const unsigned int & equations)
 {
-	std::vector<double>res/*(equations)*/;
+	CMatrix res(1, matr->getCols() - 2);
 	double Ai_lead
 		, koef;
 
@@ -151,7 +157,7 @@ std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equati
 	for (int col = matr->getCols() - 2; col >= 0;--col)
 	{ 
 		Ai_lead = (*matr)[rowLead][matr->getCols() - 1];
-		res.push_back(Ai_lead);
+		res[0][col] = (Ai_lead);
 		for (int row = rowLead; row > 0; --row)
 		{
 			koef = (*matr)[row - 1][col];
@@ -166,13 +172,13 @@ std::vector<double> CAlgorithms::reverseSubstitution(const unsigned int & equati
 }
 
 
-// Jakobi
+// Jacobi
 
 std::vector<double>  CAlgorithms::JakobiMethod()
 {
 	CMatrix * turnMatr = nullptr;
 	std::vector<double> res;
-	double precision = 0.000004; // than we will changed that and precision will become parametr from user 
+	double precision = 0.000004; // than we will changed that and precision will become parameter from user 
 	size_t maxRow = matr-> getRows(), maxCol = matr ->getCols();
 	double max = 0.0;
 	turnMatr = new CMatrix(*matr);;
@@ -190,13 +196,13 @@ std::vector<double>  CAlgorithms::JakobiMethod()
 		// Searching max.
 		JakobiFindMax(max, maxRow, maxCol);
 
-		// preapring matrix for turm
+		// preparing matrix for turn
 		prepareTurnMatr(maxRow, maxCol, *turnMatr);
 		
 		// turn 
 		JakobiTurnMatrix(*turnMatr);
 	}
-	// inpput solution values in array
+	// input solution values in array
 	JakobiSolution(res);
 
 		return res;
@@ -270,6 +276,7 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 {
 	CMatrix * temp = nullptr;
 	temp = new CMatrix(*matr);
+
 	*temp = (turnMatr) * (*matr);
 	
 	//for (size_t row = 0; row < matr->getCols(); row++)
@@ -284,6 +291,7 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 	//}
 	// change to mul matrix (both for) 
 	*temp = (*matr) * (turnMatr);
+
 	for (size_t row = 0; row < matr->getCols(); row++)
 	{
 		for (size_t col = 0; col < matr->getCols(); col++)
@@ -291,6 +299,7 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 			(*matr)[row][col] = 0.0;
 		}
 	}
+
 	*temp = (*matr) * (turnMatr);
 	//for (size_t  row = 0; row < matr->getCols(); row++)
 	//{
@@ -333,3 +342,51 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 	//}
 	if (temp!= nullptr) delete temp;
 }
+
+
+double CAlgorithms::dispRow(const double && row) const
+{
+	double res = 0;
+
+	for (size_t col = 0; col < matr->getCols(); col++)
+	{
+		res += (*matr)[row][col];
+	}
+
+	res /= matr->getCols();
+
+	return res;
+}
+
+double CAlgorithms::dispRows(const double && row1, const double && row2) const
+{
+	double res = 0;
+
+	for (size_t col = 0; col < matr->getCols(); col++)
+	{
+		res += (*matr)[row1][col] * (*matr)[row1][col];
+	}
+
+	res /= matr->getCols();
+
+	return res;
+}
+
+
+CMatrix CAlgorithms::LinRegression() const
+{
+	double dispY = dispRow(1)
+		, dispX = dispRow(2)
+		, dispXY = dispRows(1, 2)
+		, dispXX = dispRows(1, 1)
+
+		, argA = (dispX * dispY - dispXY) / (dispX * dispX - dispXX)
+		, argB = (dispXY - argA * dispXX) / dispX;
+
+	CMatrix res(1, 2);
+	res[0][0] = argA;
+	res[0][1] = argB;
+
+	return res;
+}
+
