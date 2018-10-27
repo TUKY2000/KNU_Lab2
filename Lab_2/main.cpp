@@ -48,13 +48,13 @@ int main()
 	int iCols, iRows;
 	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
-	cout << "Please choose the method that you want, press \'h\' for help:" ;
+	//cout << "Please choose the method that you want, press \'h\' for help:" ;
 	//AnalysisSimulator(	matr); // need to fix that
 
-	cin >> *A;
-	cin >> *B;
+	//cin >> *A;
+	//cin >> *B;
 
-	*m = *A * *B;
+	//*m = *A * *B;
 
 	cout << *m;
 
@@ -67,6 +67,7 @@ int main()
 	cout << endl;
 	m->setSize(iRows, iCols);
 	cin >> *m;
+	//m->symmetricalRandomMatrixValues(*m); // doesn't work normally
 	cout << *m;
 	//	test Gaussian method
 	if (m->isSymmetrical(*m))
@@ -74,6 +75,7 @@ int main()
 		JakobiMethod_(*m);
 	}
 	else cout << " matrix isn't symmetrical" << endl;
+
 	if (m != nullptr)	delete m;
 
 	system("pause");

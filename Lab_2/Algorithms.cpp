@@ -277,18 +277,18 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 	CMatrix * temp = nullptr;
 	temp = new CMatrix(*matr);
 
-	*temp = (turnMatr) * (*matr);
+	//*temp = (turnMatr) * (*matr);
 	
-	//for (size_t row = 0; row < matr->getCols(); row++)
-	//{
-	//	for (size_t col = 0; col < matr->getCols(); col++)
-	//	{
-	//		for (size_t k = 0; k < matr->getCols(); k++)
-	//		{
-	//			*temp[row][col] = *temp[row][col] + turnMatr[k][row] * (*matr)[k][col];
-	//		}
-	//	}
-	//}
+	for (size_t row = 0; row < matr->getCols(); row++)
+	{
+		for (size_t col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
+			{
+				*temp[row][col] = *temp[row][col] + turnMatr[k][row] * (*matr)[k][col]; // пофиксить баг с вылетом
+			}
+		}
+	}
 	// change to mul matrix (both for) 
 	*temp = (*matr) * (turnMatr);
 
@@ -300,18 +300,18 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 		}
 	}
 
-	*temp = (*matr) * (turnMatr);
-	//for (size_t  row = 0; row < matr->getCols(); row++)
-	//{
-	//	for (size_t  col = 0; col < matr->getCols(); col++)
-	//	{
-	//		for (size_t k = 0; k < matr->getCols(); k++)
-	//		{
-	//			(*matr)[row][col] = (*matr)[row][col] +
-	//				(*temp)[row][k] * turnMatr[k][col];
-	//		}
-	//	}
-	//}
+	//*temp = (*matr) * (turnMatr);
+	for (size_t  row = 0; row < matr->getCols(); row++)
+	{
+		for (size_t  col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
+			{
+				(*matr)[row][col] = (*matr)[row][col] +
+					(*temp)[row][k] * turnMatr[k][col];
+			}
+		}
+	}
 
 	// Jakobi method fault
 	double fault = 0.0;
@@ -329,17 +329,17 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 			(*temp)[row][col] = 0.0;
 		}
 	}
-	*temp = (turnMatr) * (turnMatr);
-	//for (size_t row = 0; row < matr->getCols(); row++)
-	//{
-	//	for (size_t col = 0; col < matr->getCols(); col++)
-	//	{
-	//		for (size_t k = 0; k < matr->getCols(); k++)
-	//		{
-	//			(*temp)[row][col] = (*temp)[row][col] + turnMatr[k][row] * turnMatr[k][col]; // res[row][k] was hear let's check out wtf is that, it can be some mistakes here.
-	//		}
-	//	}
-	//}
+	//*temp = (turnMatr) * (turnMatr);
+	for (size_t row = 0; row < matr->getCols(); row++)
+	{
+		for (size_t col = 0; col < matr->getCols(); col++)
+		{
+			for (size_t k = 0; k < matr->getCols(); k++)
+			{
+				(*temp)[row][col] = (*temp)[row][col] + turnMatr[k][row] * turnMatr[k][col]; // res[row][k] was hear let's check out wtf is that, it can be some mistakes here.
+			}
+		}
+	}
 	if (temp!= nullptr) delete temp;
 }
 
@@ -390,3 +390,7 @@ CMatrix CAlgorithms::LinRegression() const
 	return res;
 }
 
+
+
+
+// kachmage

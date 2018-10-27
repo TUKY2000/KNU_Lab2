@@ -40,7 +40,7 @@ public:
 	//************************************
 	std::vector<double>  JakobiMethod();
   
-private:
+//private:
 		
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
@@ -96,7 +96,7 @@ private:
 
 
 
-// Jakobi  part
+// Jakobi 
 
 	//***************************************************
 	// Function:	Searching max element that not on the diagonal
@@ -126,7 +126,7 @@ private:
 	//***************************************************
 	void JakobiSolution(std::vector<double> res);
 
-	//	Lineal Regression
+//	Lineal Regression
 
 	double dispRow(const double && row) const;
 
