@@ -73,7 +73,7 @@ int main()
 	{	
 		JakobiMethod_(*m);
 	}
-	else cout << " matrix isn't symetrical" << endl;
+	else cout << " matrix isn't symmetrical" << endl;
 	if (m != nullptr)	delete m;
 
 	system("pause");
@@ -84,14 +84,14 @@ int main()
 // maybe we will that input in other files
 
 
-void GaussianElimination_(const CMatrix & m)
+void GaussianElimination_( CMatrix & m)
 {
 	CAlgorithms * gaussTest = nullptr;
 	gaussTest = new CAlgorithms(m);
 
-	*m = gaussTest->GaussianElimination();
+	m = (gaussTest->GaussianElimination());
 	cout << endl << "ANSWER: (";
-	cout << *m;
+	cout << m;
 	cout << ")" << endl;
 	if (gaussTest != nullptr)	delete gaussTest;
 

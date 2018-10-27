@@ -111,6 +111,24 @@ void CMatrix::randomMatrixValues(CMatrix matr)
 
 }
 
+CMatrix & CMatrix::reverce()
+{
+	if (cols != rows) throw std::logic_error("can't reverce matrix: it is not square");
+
+	CMatrix *E = nullptr;
+	E = new CMatrix(rows, cols);
+
+	for (size_t row = 0; row < rows; ++row)
+	{
+		for (size_t col = 0; col < cols; ++col)
+		{
+			if (true)
+			{
+
+			}
+		}
+	}
+}
 
 unsigned int const CMatrix::getRows() const
 {
