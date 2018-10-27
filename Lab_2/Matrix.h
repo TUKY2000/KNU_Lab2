@@ -41,6 +41,9 @@ public:
 	double	* operator [] (const int & row) const;
 	void randomMatrixValues(CMatrix matr);
 
+	CMatrix & reverce();
+	
+
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
 	// Returns:		bool value
