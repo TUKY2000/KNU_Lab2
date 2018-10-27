@@ -40,8 +40,8 @@ bool AnalysisSimulator(CMatrix &matr);
 int main()
 {
 	CMatrix *m = new CMatrix;
-	CMatrix *A = new CMatrix(3, 4);
-	CMatrix *B = new CMatrix(4, 3);
+	CMatrix *A = new CMatrix(3, 3);
+	CMatrix *B = new CMatrix(3, 3);
 	int iCols, iRows;
 	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
@@ -52,6 +52,8 @@ int main()
 	cin >> *B;
 
 	*m = *A * *B;
+
+	cout << *m;
 
 	cout << endl;
 	cout << "Please input number of columns in your matrix:";

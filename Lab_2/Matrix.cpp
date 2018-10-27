@@ -163,7 +163,7 @@ CMatrix & CMatrix::operator+(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			*matrNew[row][col] = (mass + row * rows)[col] + other[row][col];
+			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
 
 	return *matrNew;
 }
@@ -178,7 +178,7 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			*matrNew[row][col] = (mass + row * rows)[col] + other[row][col];
+			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
 
 	return *matrNew;
 }
@@ -188,11 +188,23 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
 
+	double a = 0
+		, b = 0
+		, c = 0;
+
 	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
+
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
+	{
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
+		{
 			for (size_t inner = 0; inner < this->cols; ++inner)
-				*matrNew[row][col] += (mass + row * cols)[inner] * other[inner][col];
+			{
+				(*matrNew)[row][col] += (mass + row * cols)[inner] * other[inner][col];
+			}
+		}
+	}
+		
 
 	return *matrNew;
 }
@@ -201,8 +213,12 @@ CMatrix & CMatrix::operator*(const double & num)
 {
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
+	{
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
-			*matrNew[row][col] = (mass + row * rows)[col] * num;
+		{
+			(*matrNew)[row][col] = (mass + row * rows)[col] * num;
+		}
+	}
 
 	return *matrNew;
 }
@@ -212,7 +228,7 @@ CMatrix & CMatrix::operator~()
 	CMatrix * matrNew = new CMatrix(this->cols, this->rows);
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
-			*matrNew[row][col] = (mass + row * rows)[col];
+			(*matrNew)[row][col] = (mass + row * rows)[col];
 
 	return *matrNew;
 }
