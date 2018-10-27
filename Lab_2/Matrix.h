@@ -48,6 +48,8 @@ public:
 	//************************************
 	bool isSymmetrical(CMatrix & other);
 
+
+	void symmetricalRandomMatrixValues(CMatrix matr); // we are changing matr here
 private:	
 
 	void create();	//	create massive of pointers-massive of pointers
@@ -55,8 +57,6 @@ private:
 	void nulify();
 
 	void setElemNum(const double num);
-
-	void symmetricalRandomMatrixValues(CMatrix matr); // we are changing matr here
 	
 	unsigned int cols
 		, rows;

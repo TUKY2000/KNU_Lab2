@@ -48,13 +48,13 @@ int main()
 	int iCols, iRows;
 	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
-	cout << "Please choose the method that you want, press \'h\' for help:" ;
+	//cout << "Please choose the method that you want, press \'h\' for help:" ;
 	//AnalysisSimulator(	matr); // need to fix that
 
-	cin >> *A;
-	cin >> *B;
+	//cin >> *A;
+	//cin >> *B;
 
-	*m = *A * *B;
+	//*m = *A * *B;
 
 	cout << endl;
 	cout << "Please input number of columns in your matrix:";
@@ -65,13 +65,15 @@ int main()
 	cout << endl;
 	m->setSize(iRows, iCols);
 	cin >> *m;
+	//m->symmetricalRandomMatrixValues(*m); // doesn't work normally
 	cout << *m;
-	//	test Gaussian method
-	if (m->isSymmetrical(*m))
-	{	
-		JakobiMethod_(*m);
-	}
-	else cout << " matrix isn't symetrical" << endl;
+	//*m = *m + (*m);
+	//cout << *m;
+	//if (m->isSymmetrical(*m))
+	//{	
+	//	JakobiMethod_(*m);
+	//}
+	//else cout << " matrix isn't symetrical" << endl;
 	if (m != nullptr)	delete m;
 
 	system("pause");
@@ -82,18 +84,18 @@ int main()
 // maybe we will that input in other files
 
 
-void GaussianElimination_(const CMatrix & m)
-{
-	CAlgorithms * gaussTest = nullptr;
-	gaussTest = new CAlgorithms(m);
-
-	*m = gaussTest->GaussianElimination();
-	cout << endl << "ANSWER: (";
-	cout << *m;
-	cout << ")" << endl;
-	if (gaussTest != nullptr)	delete gaussTest;
-
-}
+//void GaussianElimination_(const CMatrix & m)
+//{
+//	CAlgorithms * gaussTest = nullptr;
+//	gaussTest = new CAlgorithms(m);
+//
+//	(*m) = gaussTest->GaussianElimination();
+//	cout << endl << "ANSWER: (";
+//	cout << (*m);
+//	cout << ")" << endl;
+//	if (gaussTest != nullptr)	delete gaussTest;
+//
+//}
 void JakobiMethod_(const CMatrix & m)
 {
 	CAlgorithms * JakobiMethod = nullptr;

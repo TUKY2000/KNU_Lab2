@@ -98,6 +98,7 @@ void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
 
 void CMatrix::randomMatrixValues(CMatrix matr)
 {
+	//if (CMatrix matr != nullptr) throw std::logic_error("Trying to input values in not empty matrix.");
 	int a = 48;
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
@@ -185,15 +186,24 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 
 CMatrix & CMatrix::operator*(const CMatrix & other)
 {
-	if (this->cols != other.getRows())
-		throw std::logic_error("");
+	//if (this->cols != other.getRows())
+		//throw std::logic_error("");
 
 	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
-	for (size_t row = 0; row < matrNew->getRows(); ++row)
-		for (size_t col = 0; col < matrNew->getCols(); ++col)
-			for (size_t inner = 0; inner < this->cols; ++inner)
-				*matrNew[row][col] += (mass + row * cols)[inner] * other[inner][col];
-
+	//for (size_t row = 0; row < matrNew->getRows(); ++row)
+	//	for (size_t col = 0; col < matrNew->getCols(); ++col)
+	//		for (size_t inner = 0; inner < this->cols; ++inner)
+	//			*matrNew[row][col] += (mass + row * cols)[inner] * other[inner][col];
+	for (size_t row = 0; row < matrNew->getCols(); row++)
+	{
+		for (size_t col = 0; col < matrNew->getCols(); col++)
+		{
+			for (size_t iterator = 0; iterator < matrNew->getCols(); iterator++)
+			{
+				*matrNew[row][col] = *matrNew[row][col] + other[iterator][row] * (*matrNew)[iterator][col];
+			}
+		}
+	}
 	return *matrNew;
 }
 
