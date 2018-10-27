@@ -33,17 +33,13 @@ public:
 	//************************************
 	CMatrix LinRegression() const;
 
-
 	//************************************
-	// Function:  Checking if matrix is a symmetrical
-	// Returns:    return new massive of own values !!!!! will change that !!!!!!        !!! Warning that function changing matrix !!! 
-	// Parameter:  double array (all matrix value).We will add precision as parameter
-	//
-	//      !!! Warning that function changing matrix !!! 
-	//  
+	// Function:	Doing all Jakobi method
+	// Returns:		return massive of own values !
+	// Parameter:	
 	//************************************
-	//double JakobiMethod(double);
-
+	std::vector<double>  JakobiMethod();
+  
 private:
 		
 	CMatrix * matr = nullptr;
@@ -101,25 +97,6 @@ private:
 
 
 // Jakobi  part
-
-
-	
-	//************************************
-	// Function:	Checking if matrix is a symmetrical
-	// Returns:		bool value
-	// Parameter:	 double array (all matrix value)  
-	//************************************
-	bool isSymmetrical();		// break inside that function let's check + troubles with *
-
-	//************************************
-	// Function:	Checking if matrix is a symmetrical
-	// Returns:		return massive of own values !
-	// Parameter:	
-	//
-	//			!!! Warning that function changing matrix !!! 
-	//  
-	//************************************
-	std::vector<double>  JakobiMethod();
 
 	//***************************************************
 	// Function:	Searching max element that not on the diagonal

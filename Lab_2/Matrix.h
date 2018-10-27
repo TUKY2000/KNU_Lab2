@@ -41,6 +41,13 @@ public:
 	double	* operator [] (const int & row) const;
 	void randomMatrixValues(CMatrix matr);
 
+	//************************************
+	// Function:	Checking if matrix is a symmetrical
+	// Returns:		bool value
+	// Parameter:	 double array (all matrix value)  
+	//************************************
+	bool isSymmetrical(CMatrix & other);
+
 private:	
 
 	void create();	//	create massive of pointers-massive of pointers

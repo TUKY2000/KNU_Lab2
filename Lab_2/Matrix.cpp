@@ -269,4 +269,23 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 
 	return input;
 }
+// Jakobi
+bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter 
+{
+	bool result = true;
+	//size_t cols = matr->getCols;
+	for (size_t col = 0; col < other.getCols(); col++)
+	{
+		for (size_t row = col; row < other.getRows() - col; row++)
+		{
+			if (other[col][row] != other[row][col])
+			{
+				result = false;
+				break;
+			}
+		}
+	}
 
+
+	return result;
+}
