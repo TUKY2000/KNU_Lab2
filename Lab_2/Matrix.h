@@ -40,8 +40,6 @@ public:
 		
 	double	* operator [] (const int & row) const;
 	void randomMatrixValues(CMatrix matr);
-
-	CMatrix & reverce();
 	
 
 	//************************************

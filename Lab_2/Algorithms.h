@@ -128,6 +128,10 @@ private:
 
 	//	Lineal Regression
 
+	void makeMatrUnitary(CMatrix & matrix);
+
+	CMatrix & getReverce(const CMatrix & matrix);
+
 	double dispRow(const double && row) const;
 
 	double dispRows(const double && row1, const double && row2) const;

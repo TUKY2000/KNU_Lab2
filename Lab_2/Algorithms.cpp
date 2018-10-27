@@ -344,6 +344,30 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 }
 
 
+void CAlgorithms::makeMatrUnitary(CMatrix & matrix)
+{
+	for (size_t row = 0; row < matrix.getRows; ++row)
+	{
+		for (size_t col = 0; col < matrix.getCols; ++col)
+		{
+			if (row == col)		matrix[row][col] = 1;
+			else				matrix[row][col] = 0;
+		}
+	}
+}
+
+
+
+CMatrix & CAlgorithms::getReverce(const CMatrix & matrix)
+{
+	if (matrix.getCols() == matrix.getRows())	throw std::logic_error("");
+
+	CMatrix * res = new CMatrix(matrix.getRows(), matrix.getCols());
+	makeMatrUnitary(*res);
+
+
+}
+
 double CAlgorithms::dispRow(const double && row) const
 {
 	double res = 0;

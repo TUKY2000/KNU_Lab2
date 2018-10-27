@@ -52,6 +52,8 @@ CMatrix::~CMatrix()
 		delete mass;
 }
 
+
+
 void CMatrix::create()
 {
 	mass = new double[rows * cols];
@@ -111,24 +113,6 @@ void CMatrix::randomMatrixValues(CMatrix matr)
 
 }
 
-CMatrix & CMatrix::reverce()
-{
-	if (cols != rows) throw std::logic_error("can't reverce matrix: it is not square");
-
-	CMatrix *E = nullptr;
-	E = new CMatrix(rows, cols);
-
-	for (size_t row = 0; row < rows; ++row)
-	{
-		for (size_t col = 0; col < cols; ++col)
-		{
-			if (true)
-			{
-
-			}
-		}
-	}
-}
 
 unsigned int const CMatrix::getRows() const
 {
@@ -205,10 +189,6 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 {
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
-
-	double a = 0
-		, b = 0
-		, c = 0;
 
 	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
 
