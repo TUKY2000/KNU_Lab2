@@ -23,7 +23,7 @@ public:
 	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	CMatrix & GaussianElimination();
+	CMatrix GaussianElimination();
 
 
 	//************************************
@@ -31,7 +31,7 @@ public:
 	// Returns:		CMatrix 
 	// Parameter:	void
 	//************************************
-	CMatrix & LinRegression();
+	CMatrix LinRegression() const;
 
 	//************************************
 	// Function:	Doing all Jakobi method
@@ -50,14 +50,14 @@ private:
 	// Returns:		number of linearly independent equations  
 	// Parameter:	void
 	//************************************
-	void directElimination();
+	unsigned int directElimination();
 
 	//************************************
 	// Function:	Find max element in column
 	// Returns:		number of row where is max element
 	// Parameter:	const int & col
 	//************************************
-	bool nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl) const;
+	std::pair<unsigned const int, double> findMax(const int & col) const;
 
 	//************************************
 	// Function:	swap rows int matrix
@@ -80,7 +80,6 @@ private:
 	//************************************
 	void subtraction(unsigned int row);
 
-
 	//************************************
 	// Function:	check if all elements in the row are null
 	// Returns:		true if all elems are null, false if not
@@ -93,7 +92,7 @@ private:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	CMatrix reverseSubstitution();
+	CMatrix reverseSubstitution(const unsigned int & equations);
 
 
 
@@ -125,14 +124,13 @@ private:
 	// Returns:		-
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiSolution(std::vector<double> & res);
+	void JakobiSolution(std::vector<double> res);
 
 	//	Lineal Regression
 
-	CMatrix & getFreeMembMatr();
-		  
-	CMatrix & getSumMatr();
-	
+	void makeMatrUnitary(CMatrix & matrix);
+
+	CMatrix & getReverce(const CMatrix & matrix);
 
 	double dispRow(const double && row) const;
 
