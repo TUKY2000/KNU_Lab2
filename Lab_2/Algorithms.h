@@ -23,7 +23,7 @@ public:
 	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	CMatrix GaussianElimination();
+	CMatrix & GaussianElimination();
 
 
 	//************************************
@@ -31,7 +31,7 @@ public:
 	// Returns:		CMatrix 
 	// Parameter:	void
 	//************************************
-	CMatrix LinRegression() const;
+	CMatrix & LinRegression();
 
 	//************************************
 	// Function:	Doing all Jakobi method
@@ -39,9 +39,9 @@ public:
 	// Parameter:	
 	//************************************
 	std::vector<double>  JakobiMethod();
-  
+
 private:
-		
+
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
 
@@ -50,14 +50,14 @@ private:
 	// Returns:		number of linearly independent equations  
 	// Parameter:	void
 	//************************************
-	unsigned int directElimination();
+	void directElimination();
 
 	//************************************
 	// Function:	Find max element in column
 	// Returns:		number of row where is max element
 	// Parameter:	const int & col
 	//************************************
-	std::pair<unsigned const int, double> findMax(const int & col) const;
+	bool nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl) const;
 
 	//************************************
 	// Function:	swap rows int matrix
@@ -80,6 +80,7 @@ private:
 	//************************************
 	void subtraction(unsigned int row);
 
+
 	//************************************
 	// Function:	check if all elements in the row are null
 	// Returns:		true if all elems are null, false if not
@@ -92,11 +93,11 @@ private:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	CMatrix reverseSubstitution(const unsigned int & equations);
+	CMatrix reverseSubstitution();
 
 
 
-// Jakobi  part
+	// Jakobi  part
 
 	//***************************************************
 	// Function:	Searching max element that not on the diagonal
@@ -104,7 +105,7 @@ private:
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
 	void JakobiFindMax(double max, size_t &maxRow, size_t &maxCol);
-	
+
 	//***************************************************
 	// Function:	prepare Turn matrix for the next iteration
 	// Returns:		-
@@ -117,26 +118,27 @@ private:
 	// Returns:		-
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiTurnMatrix( CMatrix &turnMatr);
+	void JakobiTurnMatrix(CMatrix &turnMatr);
 
 	//***************************************************
 	// Function:	input solution in vector res 
 	// Returns:		-
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiSolution(std::vector<double> res);
+	void JakobiSolution(std::vector<double> & res);
 
 	//	Lineal Regression
 
-	void makeMatrUnitary(CMatrix & matrix);
+	CMatrix & getFreeMembMatr();
 
-	CMatrix & getReverce(const CMatrix & matrix);
+	CMatrix & getSumMatr();
+
 
 	double dispRow(const double && row) const;
 
 	double dispRows(const double && row1, const double && row2) const;
 
-	
+
 
 };
 

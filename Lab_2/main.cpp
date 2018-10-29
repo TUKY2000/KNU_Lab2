@@ -43,34 +43,35 @@ void JakobiMethod_(const CMatrix & m);
 int main()
 {
 	CMatrix *m = new CMatrix;
-	CMatrix *A = new CMatrix(3, 3);
-	CMatrix *B = new CMatrix(3, 3);
 	int iCols, iRows;
 	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
-	cout << "Please choose the method that you want, press \'h\' for help:" ;
+	cout << "Please choose the method that you want, press \'h\' for help:";
 	//AnalysisSimulator(	matr); // need to fix that
 
-	cin >> *A;
-	cin >> *B;
-
-	*m = *A * *B;
-
-	cout << *m;
+	//cout << *m;
 
 	cout << endl;
 	cout << "Please input number of columns in your matrix:";
 	cin >> iCols;
-	cout << endl; 
+	cout << endl;
 	cout << "Please input number of rows in your matrix:";
 	cin >> iRows;
 	cout << endl;
 	m->setSize(iRows, iCols);
 	cin >> *m;
+	cout << *m << endl;
+
+	//test Linear Regression
+	CAlgorithms * newAlg = new CAlgorithms(*m);
+
+	*m = newAlg->LinRegression();
+
 	cout << *m;
+
 	//	test Gaussian method
 	if (m->isSymmetrical(*m))
-	{	
+	{
 		JakobiMethod_(*m);
 	}
 	else cout << " matrix isn't symmetrical" << endl;
@@ -84,7 +85,7 @@ int main()
 // maybe we will that input in other files
 
 
-void GaussianElimination_( CMatrix & m)
+void GaussianElimination_(CMatrix & m)
 {
 	CAlgorithms * gaussTest = nullptr;
 	gaussTest = new CAlgorithms(m);
@@ -96,6 +97,7 @@ void GaussianElimination_( CMatrix & m)
 	if (gaussTest != nullptr)	delete gaussTest;
 
 }
+
 void JakobiMethod_(const CMatrix & m)
 {
 	CAlgorithms * JakobiMethod = nullptr;
@@ -149,8 +151,8 @@ void printCommands()
 	cout << "To output matrix press 1" << endl;
 	cout << "To calculate by Gaussian elimination press 2" << endl;
 	cout << "To calculate by Kachmage method press 3" << endl;
-	cout << "To calculate by Jakobi methodpress 4" << endl;
-	cout << "To wate some time press 5" << endl;
+	cout << "To calculate by Jakobi method press 4" << endl;
+	cout << "To waste some time press 5" << endl;
 	cout << "To finish work with system analysis calculator 2018 press 6 " << endl;
 
 }
