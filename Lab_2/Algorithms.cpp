@@ -1,6 +1,7 @@
 #include "Algorithms.h"
 #include <cmath>
 #include <iostream>
+#include <string>
 
 CAlgorithms::CAlgorithms()
 {
@@ -36,41 +37,68 @@ CAlgorithms::~CAlgorithms()
 
 CMatrix CAlgorithms::GaussianElimination()
 {
-	unsigned int equations = directElimination();
-	return reverseSubstitution(equations);
+	directElimination();
+	return reverseSubstitution();
+}
+
+bool CAlgorithms::nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl) const
+{
+
+	for (size_t row = col; row < matr->getRows(); row++)
+	{
+		if ((*matr)[row][col] != 0)
+		{
+			leadEl = std::make_pair(row, (*matr)[row][col]);
+			return true;
+		}
+	}
+	return false;
 }
 
 unsigned int CAlgorithms::directElimination()
 {
-	size_t index = 0;
-	unsigned int next = index;
-	unsigned const int iters = matr->getRows() - 1;
-	std::pair<unsigned int, double> maxInCol;
-	for (; index < iters; ++index)	
+	unsigned int  index = 0
+		, next = index
+		, emptLines = 0;
+
+	std::pair<unsigned int, double> leadEl;
+
+	for (; index < matr->getRows(); ++index)
 	{
 		if (!empty(index))
 		{
-			maxInCol = findMax(index);
-			swap(maxInCol.first, next);
-			std::cout << std::endl << *matr;
-			normalize(next, maxInCol.second);
-			std::cout << std::endl << *matr;
-			subtraction(next);
-			std::cout << std::endl << *matr;
+			if (nonZeroInCol(index, leadEl))
+			{
+				swap(leadEl.first, next);
+				std::cout << std::endl << *matr;
+				normalize(next, leadEl.second);
+				std::cout << std::endl << *matr;
+				subtraction(next);
+				std::cout << std::endl << *matr;
 				++next;
+			}
+			else
+			{
+				throw std::logic_error("System of equations has an infinite number of solutions.");
+			}
 		}
 		else
 		{
-			throw std::logic_error("System of equations has not solution.");
+			if ((*matr)[index][matr->getCols()] != 0)
+			{
+				throw std::logic_error("System of equations has not solution.");
+			}
+			else if (matr->getRows() + emptLines < matr->getCols())
+			{
+				throw std::logic_error("System of equations has an infinite number of solutions: SoE has " + std::to_string(emptLines) + " or more linearly dependent equations");
+			}
+			else
+			{
+				++emptLines;
+			}
 		}
 	}
-	maxInCol = findMax(index);
-	normalize(next, maxInCol.second);
-	std::cout << std::endl << *matr;
-
-	return next;
 }
-
 std::pair<unsigned const int, double> CAlgorithms::findMax(const int & col) const
 {
 	size_t row = col;
@@ -117,14 +145,17 @@ void CAlgorithms::normalize(unsigned const int & ROW, const double & elem)
 
 void CAlgorithms::subtraction(unsigned int ROW)
 {
-	size_t col = ROW;
-	for (size_t row = ROW + 1; row < matr->getRows(); ++row)
+	if (ROW < matr->getRows() - 1)
 	{
-		col = ROW;
-		double koef = (*matr)[row][col];
-		for (; col < matr->getCols(); ++col)
+		size_t col = ROW;
+		for (size_t row = ROW + 1; row < matr->getRows(); ++row)
 		{
-			(*matr)[row][col] -= (*matr)[ROW][col] * koef;
+			col = ROW;
+			double koef = (*matr)[row][col];
+			for (; col < matr->getCols(); ++col)
+			{
+				(*matr)[row][col] -= (*matr)[ROW][col] * koef;
+			}
 		}
 	}
 }
@@ -132,7 +163,7 @@ void CAlgorithms::subtraction(unsigned int ROW)
 bool CAlgorithms::empty(const unsigned int & row) const
 {
 	bool res = true;
-	for (size_t col = 0; col < matr->getCols(); ++col)
+	for (int col = 0; col < matr->getCols(); ++col)
 	{
 		if ((*matr)[row][col] != 0)
 		{
@@ -146,7 +177,7 @@ bool CAlgorithms::empty(const unsigned int & row) const
 	return res;
 }
 
-CMatrix CAlgorithms::reverseSubstitution(const unsigned int & equations)
+CMatrix CAlgorithms::reverseSubstitution()
 {
 	CMatrix res(1, matr->getCols() - 2);
 	double Ai_lead
@@ -176,45 +207,82 @@ CMatrix CAlgorithms::reverseSubstitution(const unsigned int & equations)
 
 std::vector<double>  CAlgorithms::JakobiMethod()
 {
+	std::cout << *matr << "\n";
 	CMatrix * turnMatr = nullptr;
+	turnMatr = new CMatrix(*matr);
 	std::vector<double> res;
-	double precision = 0.000004; // than we will changed that and precision will become parameter from user 
+	double precision = 0.005; // than we will changed that and precision will become parameter from user 
 	size_t maxRow = matr-> getRows(), maxCol = matr ->getCols();
 	double max = 0.0;
-	turnMatr = new CMatrix(*matr);;
-	double fault = 0.0;
-	// add to while 
-	for (size_t row = 0; row < matr->getCols(); row++) 
-	{
-		for (size_t col = row + 1; col < matr->getCols(); col++) 
-		{
-			fault = fault + (*matr)[row][col] * (*matr)[row][col];
-		}
-	}
+	double fault = 0.0; 
+	calculateJakobiFault(fault);
+	int i = 1;
 	while (fault > precision) 
 	{
-		// Searching max.
+		max = 0.0;
+		// Searching max element.
+		std::cout << "Jakobi iteration:" << i << "\n";
 		JakobiFindMax(max, maxRow, maxCol);
-
-		// preparing matrix for turn
+		if (max < precision) break; // need to end while if Jakobi Method finished? but fault still bigger than precision
+		std::cout << "max = " << max;
 		prepareTurnMatr(maxRow, maxCol, *turnMatr);
-		
-		// turn 
+		std::cout << "\n" << *turnMatr << "\n";
 		JakobiTurnMatrix(*turnMatr);
+		i++;
+		std::cout << "\n";
+		std::cout << *matr;
+		std::cout << "\n";
+		cleanZeroElements(precision);
+		if (i > 40) break; // crutch // unstopable cycle, check fault, check findMax
 	}
-	// input solution values in array
 	JakobiSolution(res);
-
-		return res;
+	return res;
 }
 
 // check architecture
-void CAlgorithms::JakobiFindMax( double max, size_t &maxRow, size_t &maxCol)
+void CAlgorithms::JakobiFindMax( double &max, size_t &maxRow, size_t &maxCol)
 {
-		max = 0.0;
-		for (size_t row = 0; row < matr->getCols(); row++)
+	//for (int col = 1; col < matr->getCols(); col++)
+	//{
+	//	for (int row = col; row < matr->getRows() - col; row++)
+	//	{
+	//			if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
+	//			{
+	//				max = (*matr)[row][col];
+	//				maxRow = row;
+	//				maxCol = col;
+	//			}
+	//			else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
+	//			{
+	//				max = -(*matr)[row][col];
+	//				maxRow = row;
+	//				maxCol = col;
+	//			}
+	//		}
+	//	}
+	//for (int row = 1; row < matr->getRows(); row++)
+	//{
+	//	for (int col = row; col < matr->getCols() - row; col++)
+	//	{
+	//		if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
+	//		{
+	//			max = (*matr)[row][col];
+	//			maxRow = row;
+	//			maxCol = col;
+	//		}
+	//		else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
+	//		{
+	//			max = -(*matr)[row][col];
+	//			maxRow = row;
+	//			maxCol = col;
+	//		}
+	//	}
+	//}
+	for (int row = 0; row < matr->getCols(); row++)
+	{
+		for (int col = 0; col < matr->getCols(); col++)
 		{
-			for (size_t col = row + 1; col < matr->getCols(); col++)
+			if (row != col)
 			{
 				if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
 				{
@@ -230,16 +298,39 @@ void CAlgorithms::JakobiFindMax( double max, size_t &maxRow, size_t &maxCol)
 				}
 			}
 		}
+	}
 }
 
 // change vector to matrix 1*n
-void CAlgorithms::JakobiSolution(std::vector<double> res)
+void CAlgorithms::JakobiSolution(std::vector<double> &res)
 {
-	for (size_t  row = 0; row < matr->getCols(); row++)
+	for (int  row = 0; row < matr->getCols(); row++)
 	{
-		for (size_t  col = 0; col < matr->getCols(); col++)
+		
+			res.push_back((*matr)[row][row]);
+		
+	}
+}
+
+void CAlgorithms::makeIdentityMatrix(CMatrix & turnMatr)
+{
+	for (int row = 0; row < matr->getCols(); row++)
+	{
+		for (int col = 0; col < matr->getCols(); col++)
 		{
-			res.push_back((*matr)[row][col]);
+			turnMatr[row][col] = 0;
+		}
+		turnMatr[row][row] = 1;
+	}
+}
+
+void CAlgorithms::makeZeroMatrix(CMatrix & other)
+{
+	for (int row = 0; row < other.getCols(); row++)
+	{
+		for (int col = 0; col < other.getCols(); col++)
+		{
+			(other)[row][col] = 0.0;
 		}
 	}
 }
@@ -247,20 +338,13 @@ void CAlgorithms::JakobiSolution(std::vector<double> res)
 void CAlgorithms::prepareTurnMatr(size_t maxRow, size_t maxCol, CMatrix &turnMatr)
 {
 	double fi;
-	bool res = false;
-	for (size_t row = 0; row < matr->getCols(); row++)
+	makeIdentityMatrix(turnMatr);
+
+	if (((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol]) && ( (*matr)[maxCol][maxCol] == (*matr)[maxRow][maxCol]) )
 	{
-		for (size_t col = 0; col < matr->getCols(); col++)
-		{
-			turnMatr[row][col] = 0;
-		}
-		turnMatr[row][row] = 1;
-	}
-	if ((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol])
-	{
-		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] =
-			turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
-		turnMatr[maxRow][maxCol] = -sqrt(2.0) / 2.0;
+		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] = 
+		turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
+			turnMatr[maxRow][maxCol] = -sqrt(2.0) / 2.0;
 	}
 	else
 	{
@@ -277,73 +361,49 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 	CMatrix * temp = nullptr;
 	temp = new CMatrix(*matr);
 
-	//*temp = (turnMatr) * (*matr);
+	*temp = (~turnMatr) * (*matr);
 	
-	for (size_t row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t col = 0; col < matr->getCols(); col++)
-		{
-			for (size_t k = 0; k < matr->getCols(); k++)
-			{
-				*temp[row][col] = *temp[row][col] + turnMatr[k][row] * (*matr)[k][col]; // пофиксить баг с вылетом
-			}
-		}
-	}
-	// change to mul matrix (both for) 
-	*temp = (*matr) * (turnMatr);
+	*temp = (*temp) * (turnMatr);
 
-	for (size_t row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t col = 0; col < matr->getCols(); col++)
-		{
-			(*matr)[row][col] = 0.0;
-		}
-	}
+	//makeZeroMatrix(*matr); // ?
 
 	//*temp = (*matr) * (turnMatr);
-	for (size_t  row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t  col = 0; col < matr->getCols(); col++)
-		{
-			for (size_t k = 0; k < matr->getCols(); k++)
-			{
-				(*matr)[row][col] = (*matr)[row][col] +
-					(*temp)[row][k] * turnMatr[k][col];
-			}
-		}
-	}
-
-	// Jakobi method fault
+	
 	double fault = 0.0;
-	for (size_t row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t col = row + 1; col < matr->getCols(); col++)
-		{
-			fault = fault + (*matr)[row][col] * (*matr)[row][col];
-		}
-	}
-	for (size_t row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t col = 0; col < matr->getCols(); col++)
-		{
-			(*temp)[row][col] = 0.0;
-		}
-	}
+	calculateJakobiFault(fault);
+	*matr = *temp;
+	makeZeroMatrix(*temp);
 	//*temp = (turnMatr) * (turnMatr);
-	for (size_t row = 0; row < matr->getCols(); row++)
-	{
-		for (size_t col = 0; col < matr->getCols(); col++)
-		{
-			for (size_t k = 0; k < matr->getCols(); k++)
-			{
-				(*temp)[row][col] = (*temp)[row][col] + turnMatr[k][row] * turnMatr[k][col]; // res[row][k] was hear let's check out wtf is that, it can be some mistakes here.
-			}
-		}
-	}
+	
 	if (temp!= nullptr) delete temp;
 }
 
 
+void CAlgorithms::calculateJakobiFault(double & fault)
+{
+	for (int row = 0; row < matr->getCols(); row++)
+	{
+		for (int col = row + 1; col < matr->getCols(); col++)
+		{
+			fault = fault + (*matr)[row][col] * (*matr)[row][col];
+		}
+	}
+	fault = sqrt(fault);
+}
+
+void CAlgorithms::cleanZeroElements( double precision)
+{
+	for (int row = 0; row < matr->getCols(); row++)
+	{
+		for (int col = 0; col < matr->getCols(); col++)
+		{
+			if ((*matr)[row][col] < precision) (*matr)[row][col] = 0;
+		}
+	}
+
+}
+
+// Linear regression
 double CAlgorithms::dispRow(const double && row) const
 {
 	double res = 0;
@@ -390,7 +450,138 @@ CMatrix CAlgorithms::LinRegression() const
 	return res;
 }
 
+CMatrix & CAlgorithms::getFreeMembMatr()
+{
+	CMatrix * res = nullptr;
+	res = new CMatrix(matr->getCols(), 1, 0);
+
+	//	first elem
+	for (size_t row = 0; row < res->getRows(); ++row)
+	{
+		(*res)[0][0] += (*matr)[row][0];
+
+	}
+
+	//	 from 1 to last elems
+	for (size_t col = 1, row = 1; col < matr->getCols(); ++col, ++row)
+	{
+		for (size_t rowAdd = 0; rowAdd < matr->getRows(); ++rowAdd)
+		{
+			(*res)[row][0] += (*matr)[rowAdd][0] * (*matr)[rowAdd][col];
+		}
+	}
+
+	return *res;
+}
+
+CMatrix & CAlgorithms::getSumMatr()
+{
+	CMatrix * res = nullptr;
+	res = new CMatrix(matr->getCols(), matr->getCols());
+
+	// [0][0] elem
+	*res[0][0] = matr->getRows();
+
+	double summ = 0;
+
+	// 0 row and 0 col
+	for (int col = 1; col < matr->getCols(); ++col)
+	{
+		for (int row = 0; row < matr->getRows(); ++row)
+		{
+			summ += (*matr)[row][col];
+		}
+
+		(*res)[col][0] = (*res)[0][col] = summ;
+		summ = 0;
+	}
+
+	// from 1 to N
+	for (int row = 1; row < res->getRows(); ++row)
+	{
+		for (int col = 1; col <= row; ++col)
+		{
+			//	calculate number of element of result matrix [row][col]
+			for (int colAdd1 = col; colAdd1 < matr->getCols(); ++colAdd1)
+			{
+				for (int colAdd2 = colAdd1; colAdd2 < matr->getCols(); ++colAdd2)
+				{
+					for (int rowAdd = 0; rowAdd < matr->getRows(); ++rowAdd)
+					{
+						summ += (*matr)[rowAdd][colAdd1] * (*matr)[rowAdd][colAdd2];
+					}
+				}
+			}
+
+			(*res)[row][col] = (*res)[col][row] = summ;
+			summ = 0;
+		}
+	}
+
+	//	wtf Vano codded
+	/*for (int col = 1; col < matr->getCols(); col++)
+	{
+	for (int row = 1; row < matr->getRows(); row++)
+	{
+	for (int dot = 1; dot < matr->getRows(); dot++)
+	(*res)[row][col] = (*matr)[dot][row] * (*matr)[dot][col];
+
+	}
+	}*/
+
+	return *res;
+}
 
 
+CMatrix & CAlgorithms::LinRegression()
+{
+	CMatrix * res = new CMatrix;
+
+	CMatrix *A = new CMatrix;
+	CMatrix *B = new CMatrix;
+
+	*A = getSumMatr();
+	*B = getFreeMembMatr();
+
+	*res = ~(*A) * (*B);
+
+	// try 1
+	/*CMatrix * leadCord = new CMatrix(1, matr->getCols());
+
+	for (size_t col = 0; col < matr->getCols(); col++)
+	{
+	(*leadCord)[0][col] = (*matr)[0][col];
+	(*matr)[0][col] = 1;
+	}
+
+
+
+	*res = getReverce((~(*matr) * (*matr))) * ~(*matr) * (*leadCord);
+	*/
+
+	return *res;
+}
 
 // kachmage
+//double CAlgorithms::KachmageMethod(CMatrix & b)
+//{
+	//double precision = 0.00000000001;
+	//CMatrix x(*this, 0);
+	//CMatrix x1(1, N_size, 0);
+	//CMatrix sub(1, N_size, 1);
+	//int j = 0;
+	//while (sub.norma() > precision)
+	//{
+	//	CMatrix ai(*this, j);
+	//	double temp = ((b.M[0][j] - ai.skal_dob(x)) / (ai.norma()*ai.norma()));
+	//	ai = ai * temp;
+	//	x1 = x + ai;
+	//	sub = x1 - x;
+	//	//  cout << sub.norma()<<endl;
+	//	x = x1;
+	//	if (j < N_size - 1)
+	//		j++;
+	//	else j = 0;
+	//}
+	//return x;
+//}

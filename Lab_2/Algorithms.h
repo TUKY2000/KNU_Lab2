@@ -1,5 +1,5 @@
 #pragma once
-
+// моя
 #include "Matrix.h"
 #include <vector>
 
@@ -39,8 +39,15 @@ public:
 	// Parameter:	
 	//************************************
 	std::vector<double>  JakobiMethod();
+
+	//************************************
+	// Function:	find coefficients of the line function ................
+	// Returns:		CMatrix 
+	// Parameter:	void
+	//************************************
+	CMatrix & LinRegression();
   
-//private:
+private:
 		
 	CMatrix * matr = nullptr;
 	//	std::vector<double> Ai;
@@ -58,6 +65,13 @@ public:
 	// Parameter:	const int & col
 	//************************************
 	std::pair<unsigned const int, double> findMax(const int & col) const;
+
+	//************************************
+	// Function:	Find max element in column
+	// Returns:		number of row where is max element
+	// Parameter:	const int & col
+	//************************************
+	bool nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl) const;
 
 	//************************************
 	// Function:	swap rows int matrix
@@ -92,7 +106,7 @@ public:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	CMatrix reverseSubstitution(const unsigned int & equations);
+	CMatrix reverseSubstitution();
 
 
 
@@ -103,7 +117,7 @@ public:
 	// Returns:		---
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiFindMax(double max, size_t &maxRow, size_t &maxCol);
+	void JakobiFindMax(double &max, size_t &maxRow, size_t &maxCol);
 	
 	//***************************************************
 	// Function:	prepare Turn matrix for the next iteration
@@ -124,15 +138,49 @@ public:
 	// Returns:		-
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiSolution(std::vector<double> res);
+	void JakobiSolution(std::vector<double> &res);
+
+	//***************************************************
+	// Function:	making Identity matrix
+	// Returns:		-
+	// Parameter:	matrix  
+	//***************************************************
+	void makeIdentityMatrix(CMatrix &turnMatr);
+
+	//***************************************************
+	// Function:	making all values of matrix = 0
+	// Returns:		-
+	// Parameter:	matrix  
+	//***************************************************
+	void makeZeroMatrix(CMatrix &other);
+
+	//***************************************************
+	// Function:	calculating fault
+	// Returns:		-
+	// Parameter:	double fault
+	//***************************************************
+	void calculateJakobiFault(double & fault);
+
+
+	//***************************************************
+	// Function:	making all values that <precision = 0
+	// Returns:		-
+	// Parameter:	matrix, precision 
+	//***************************************************
+	void cleanZeroElements(double precision);
 
 //	Lineal Regression
+
+	CMatrix & getFreeMembMatr();
+
+	CMatrix & getSumMatr();
 
 	double dispRow(const double && row) const;
 
 	double dispRows(const double && row1, const double && row2) const;
 
-	
+// Kachmage
+	//double KachmageMethod(CMatrix & b);	
 
 };
 

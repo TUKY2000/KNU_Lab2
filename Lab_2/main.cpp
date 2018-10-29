@@ -43,8 +43,8 @@ void JakobiMethod_(const CMatrix & m);
 int main()
 {
 	CMatrix *m = new CMatrix;
-	CMatrix *A = new CMatrix(3, 3);
-	CMatrix *B = new CMatrix(3, 3);
+	//CMatrix *A = new CMatrix(3, 3);
+	//CMatrix *B = new CMatrix(3, 3);
 	int iCols, iRows;
 	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
@@ -56,7 +56,7 @@ int main()
 
 	//*m = *A * *B;
 
-	cout << *m;
+	//cout << *m;
 
 	cout << endl;
 	cout << "Please input number of columns in your matrix:";
@@ -66,15 +66,17 @@ int main()
 	cin >> iRows;
 	cout << endl;
 	m->setSize(iRows, iCols);
-	cin >> *m;
-	//m->symmetricalRandomMatrixValues(*m); // doesn't work normally
+	//cin >> *m;
+	//cout << *m;
+	CAlgorithms * newAlg = new CAlgorithms(*m);
+
+	cout << ~(*m);
+
+	*m = newAlg->LinRegression();
+
 	cout << *m;
-	//	test Gaussian method
-	if (m->isSymmetrical(*m))
-	{	
-		JakobiMethod_(*m);
-	}
-	else cout << " matrix isn't symmetrical" << endl;
+
+	//AnalysisSimulator(*m);
 
 	if (m != nullptr)	delete m;
 
@@ -151,8 +153,8 @@ void printCommands()
 	cout << "To output matrix press 1" << endl;
 	cout << "To calculate by Gaussian elimination press 2" << endl;
 	cout << "To calculate by Kachmage method press 3" << endl;
-	cout << "To calculate by Jakobi methodpress 4" << endl;
-	cout << "To wate some time press 5" << endl;
+	cout << "To calculate by Jakobi method press 4" << endl;
+	cout << "To calculate linear regression press 5" << endl;
 	cout << "To finish work with system analysis calculator 2018 press 6 " << endl;
 
 }
@@ -173,10 +175,16 @@ bool doCommand(Commands command, CMatrix &matr)
 		cout << "We will add that function in nearest update" << endl;
 		break;
 	case  Jakobi:
-		cout << "We will add that function in nearest update" << endl;
+		//matr.symmetricalRandomMatrixValues(matr);
+		cin >> matr;
+		if (matr.isSymmetrical(matr))
+		{
+			JakobiMethod_(matr);
+		}
+		else cout << " matrix isn't symmetrical" << endl;
 		break;
 	case linRegressParametr:
-		cout << "We will add that function in nearest update" << endl;
+		cout << " ALMOST DONE LINEAL REGRESSION @!!!@" << endl;
 		break;
 	case finishWork:
 		cout << "Work was ended." << endl;

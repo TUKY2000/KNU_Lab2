@@ -52,6 +52,8 @@ CMatrix::~CMatrix()
 		delete mass;
 }
 
+
+
 void CMatrix::create()
 {
 	mass = new double[rows * cols];
@@ -73,63 +75,121 @@ void CMatrix::setElemNum(const double num)
 	}
 }
 
-// added for Jakobi method  exactly for symmetricalrandomMatrixValues
-int rand1(int & a)
+bool CMatrix::nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl)
 {
-	a = (28 * a + 76) % m;
-	return a;
+	for (size_t row = col; row < rows; row++)
+	{
+		if ((mass + row * cols)[col] != 0)
+		{
+			leadEl = std::make_pair(row, (mass + row * cols)[col]);
+			return true;
+		}
+	}
+	return false;
 }
+
+void CMatrix::swap(const int & row1, const int & row2, CMatrix & other)
+{
+	if (row1 != row2)
+	{
+		double temp = 0;
+
+		for (size_t col = 0; col < cols; ++col)
+		{
+			temp = (mass + row1 * cols)[col];
+			(mass + row1 * cols)[col] = (mass + row2 * cols)[col];
+			(mass + row2 * cols)[col] = temp;
+
+			temp = other[row1][col];
+			other[row1][col] = other[row2][col];
+			other[row2][col] = temp;
+		}
+	}
+}
+
+void CMatrix::normalize(unsigned const int & row, const double & element, CMatrix & other)
+{
+	for (size_t col = 0; col < cols; col++)
+	{
+		(mass + row * cols)[col] /= element;
+		other[row][col] /= element;
+	}
+}
+
+void CMatrix::dirSub(unsigned int row, CMatrix & other)
+{
+	if (row < rows - 1)
+	{
+		for (size_t row1 = row + 1; row1 < rows; ++row1)
+		{
+			double koef = (mass + row1 * cols)[row];
+			for (size_t col = 0; col < cols; ++col)
+			{
+				(mass + row1 * cols)[col] -= (mass + row * cols)[col] * koef;
+				other[row1][col] -= other[row][col] * koef;
+			}
+		}
+	}
+}
+
+void CMatrix::revSub(CMatrix & other)
+{
+	double koef = 0
+		, a
+		, b;
+
+	for (int row1 = rows - 1; row1 > 0; --row1)
+	{
+		for (int row2 = row1 - 1; row2 >= 0; --row2)
+		{
+			koef = (mass + row2 * cols)[row1];
+			for (unsigned int col = 0; col < cols; ++col)
+			{
+				//a = (mass + row2 * cols)[col];
+				//b = (mass + row1 * cols)[col];
+				(mass + row2 * cols)[col] -= (mass + row1 * cols)[col] * koef;
+
+				//a = other[row2][col];
+				//b = other[row1][col];
+				other[row2][col] -= other[row1][col] * koef;
+			}
+			std::cout << *this << std::endl << other << std::endl;
+		}
+	}
+}
+
 // added for Jakobi method 
 void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
 {
-	int a = 48;
+	
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
 
 		for (size_t row = 0; row < matr.getRows() - col; ++row)
 		{
-			matr[col][row] = rand1(a);
+			matr[col][row] = ((-1)^rand()) *(rand()%60);
 			matr[row][col] = matr[col][row];
 		}
-		
+
 	}
 
 }
 
 void CMatrix::randomMatrixValues(CMatrix matr)
 {
-	//if (CMatrix matr != nullptr) throw std::logic_error("Trying to input values in not empty matrix.");
 	int a = 48;
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
 
 		for (size_t row = 0; row < matr.getRows(); ++row)
 		{
-			matr[col][row] = rand1(a);
+			matr[col][row] = ((-1) ^ rand()) *(rand() % 60);
 		}
 
 	}
 
 }
 
-CMatrix & CMatrix::reverce()
-{
-	if (cols != rows) throw std::logic_error("can't reverce matrix: it is not square");
-
-	CMatrix *E = nullptr;
-	E = new CMatrix(rows, cols);
-
-	for (size_t row = 0; row < rows; ++row)
-	{
-		for (size_t col = 0; col < cols; ++col)
-		{
-			if (true)
-			{
-
-			}
-		}
-	}
-}
 
 unsigned int const CMatrix::getRows() const
 {
@@ -150,7 +210,7 @@ void CMatrix::setSize(const unsigned int _rows, const unsigned _cols)
 
 CMatrix & CMatrix::operator=(const CMatrix & other)
 {
-	cols = other.getCols();		
+	cols = other.getCols();
 	rows = other.getRows();
 	create();
 
@@ -204,19 +264,23 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 
 CMatrix & CMatrix::operator*(const CMatrix & other)
 {
-	//if (this->cols != other.getRows())
-		//throw std::logic_error("");
+	if (this->cols != other.getRows())
+		throw std::logic_error("");
 
-	for (size_t row = 0; row < matrNew->getCols(); row++)
+	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
+
+	for (size_t row = 0; row < matrNew->getRows(); ++row)
 	{
-		for (size_t col = 0; col < matrNew->getCols(); col++)
+		for (size_t col = 0; col < matrNew->getCols(); ++col)
 		{
-			for (size_t iterator = 0; iterator < matrNew->getCols(); iterator++)
+			for (size_t inner = 0; inner < this->cols; ++inner)
 			{
-				*matrNew[row][col] = *matrNew[row][col] + other[iterator][row] * (*matrNew)[iterator][col];
+				(*matrNew)[row][col] += (mass + row * cols)[inner] * other[inner][col];
 			}
 		}
 	}
+
+
 	return *matrNew;
 }
 
@@ -236,12 +300,35 @@ CMatrix & CMatrix::operator*(const double & num)
 
 CMatrix & CMatrix::operator~()
 {
-	CMatrix * matrNew = new CMatrix(this->cols, this->rows);
-	for (size_t row = 0; row < matrNew->getRows(); ++row)
-		for (size_t col = 0; col < matrNew->getCols(); ++col)
-			(*matrNew)[row][col] = (mass + row * rows)[col];
+	if (cols != rows)	throw std::logic_error("");
 
-	return *matrNew;
+	CMatrix * res = new CMatrix(rows, cols);
+	*res = unitary(rows);
+
+	std::pair<unsigned int, double> leadEl;
+
+	size_t row = 0;
+
+	for (; row < rows; ++row)
+	{
+		nonZeroInCol(row, leadEl);
+
+		swap(row, leadEl.first, *res);
+
+		std::cout << *this << std::endl << *res << std::endl;
+
+		normalize(row, leadEl.second, *res);
+
+		std::cout << *this << std::endl << *res << std::endl;
+
+		dirSub(row, *res);
+
+		std::cout << *this << std::endl << *res << std::endl;
+	}
+
+	revSub(*res);
+
+	return *res;
 }
 
 double * CMatrix::operator[](const int & row) const
@@ -285,9 +372,9 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter
 {
 	bool result = true;
 	//size_t cols = matr->getCols;
-	for (size_t col = 0; col < other.getCols(); col++)
+	for (int col = 0; col < other.getCols(); col++)
 	{
-		for (size_t row = col; row < other.getRows() - col; row++)
+		for (int row = col; row < other.getRows() - col; row++)
 		{
 			if (other[col][row] != other[row][col])
 			{
@@ -299,4 +386,16 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter
 
 
 	return result;
+}
+
+CMatrix & CMatrix::unitary(const unsigned int & dim)
+{
+	CMatrix * res = new CMatrix(dim, dim, 0);
+
+	for (size_t row = 0; row < dim; ++row)
+	{
+		(*res)[row][row] = 1;
+	}
+
+	return *res;
 }
