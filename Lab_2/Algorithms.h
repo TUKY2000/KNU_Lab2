@@ -106,7 +106,7 @@ private:
 	// Returns:		vector of free members
 	// Parameter:	number linearly independent equations  
 	//************************************
-	CMatrix reverseSubstitution();
+	CMatrix & reverseSubstitution();
 
 
 
@@ -174,6 +174,8 @@ private:
 	CMatrix & getFreeMembMatr();
 
 	CMatrix & getSumMatr();
+
+	CMatrix & randPoints(const CMatrix & koefs);
 
 	double dispRow(const double && row) const;
 

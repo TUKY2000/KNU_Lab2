@@ -70,17 +70,18 @@ int main()
 	//cout << *m;
 	CAlgorithms * newAlg = new CAlgorithms(*m);
 
-	cout << ~(*m);
+	//cout << ~(*m);
 
 	*m = newAlg->LinRegression();
 
-	cout << *m;
+	cout << endl << *m;
 
 	//AnalysisSimulator(*m);
 
 	if (m != nullptr)	delete m;
 
 	system("pause");
+
 	return 0;
 }
 

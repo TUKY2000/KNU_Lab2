@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <ctime>
+#include <cmath>
 
 CAlgorithms::CAlgorithms()
 {
@@ -70,11 +72,8 @@ unsigned int CAlgorithms::directElimination()
 			if (nonZeroInCol(index, leadEl))
 			{
 				swap(leadEl.first, next);
-				std::cout << std::endl << *matr;
 				normalize(next, leadEl.second);
-				std::cout << std::endl << *matr;
 				subtraction(next);
-				std::cout << std::endl << *matr;
 				++next;
 			}
 			else
@@ -177,29 +176,28 @@ bool CAlgorithms::empty(const unsigned int & row) const
 	return res;
 }
 
-CMatrix CAlgorithms::reverseSubstitution()
+CMatrix & CAlgorithms::reverseSubstitution()
 {
-	CMatrix res(1, matr->getCols() - 2);
+	CMatrix *res = new CMatrix(1, matr->getCols() - 1);
 	double Ai_lead
 		, koef;
 
-	unsigned int rowLead = matr->getRows() - 1;
+	int rowLead = matr->getRows() - 1;
 
 	for (int col = matr->getCols() - 2; col >= 0;--col)
 	{ 
 		Ai_lead = (*matr)[rowLead][matr->getCols() - 1];
-		res[0][col] = (Ai_lead);
+		(*res)[0][matr->getCols() - 2  - col] = (Ai_lead);
 		for (int row = rowLead; row > 0; --row)
 		{
 			koef = (*matr)[row - 1][col];
 			(*matr)[row - 1][matr->getCols() - 1] -= koef * Ai_lead;
-			(*matr)[row - 1][col] -= koef * (*matr)[row][col];
+			(*matr)[row - 1][col] -= koef * (*matr)[rowLead][col];
 		}
 		--rowLead;
-		std::cout << *matr << std::endl;
 	}
 	
-	return res;
+	return *res;
 }
 
 
@@ -456,7 +454,7 @@ CMatrix & CAlgorithms::getFreeMembMatr()
 	res = new CMatrix(matr->getCols(), 1, 0);
 
 	//	first elem
-	for (size_t row = 0; row < res->getRows(); ++row)
+	for (size_t row = 0; row < matr->getRows(); ++row)
 	{
 		(*res)[0][0] += (*matr)[row][0];
 
@@ -477,7 +475,7 @@ CMatrix & CAlgorithms::getFreeMembMatr()
 CMatrix & CAlgorithms::getSumMatr()
 {
 	CMatrix * res = nullptr;
-	res = new CMatrix(matr->getCols(), matr->getCols());
+	res = new CMatrix(matr->getCols(), matr->getCols(), 0);
 
 	// [0][0] elem
 	*res[0][0] = matr->getRows();
@@ -499,43 +497,58 @@ CMatrix & CAlgorithms::getSumMatr()
 	// from 1 to N
 	for (int row = 1; row < res->getRows(); ++row)
 	{
-		for (int col = 1; col <= row; ++col)
+		for (int col = 1; col < res->getRows(); ++col)
 		{
 			//	calculate number of element of result matrix [row][col]
-			for (int colAdd1 = col; colAdd1 < matr->getCols(); ++colAdd1)
+			for (int  dot = 0; dot < matr->getRows(); ++dot)
 			{
-				for (int colAdd2 = colAdd1; colAdd2 < matr->getCols(); ++colAdd2)
-				{
-					for (int rowAdd = 0; rowAdd < matr->getRows(); ++rowAdd)
-					{
-						summ += (*matr)[rowAdd][colAdd1] * (*matr)[rowAdd][colAdd2];
-					}
-				}
+				(*res)[row][col] += (*matr)[dot][row] * (*matr)[dot][col];
+				
 			}
-
-			(*res)[row][col] = (*res)[col][row] = summ;
-			summ = 0;
 		}
 	}
-
-	//	wtf Vano codded
-	/*for (int col = 1; col < matr->getCols(); col++)
-	{
-	for (int row = 1; row < matr->getRows(); row++)
-	{
-	for (int dot = 1; dot < matr->getRows(); dot++)
-	(*res)[row][col] = (*matr)[dot][row] * (*matr)[dot][col];
-
-	}
-	}*/
-
 	return *res;
 }
 
 
+CMatrix & CAlgorithms::randPoints(const CMatrix & koefs)
+{
+	srand(time(0));
+	CMatrix * res = new CMatrix((20 + rand() % 10), koefs.getCols(), 0);
+	//double num;
+	//for (unsigned int row = 0; row < res->getRows(); ++row)
+	//{
+	//	for (unsigned int col = 0; col < res->getCols(); ++col)
+	//	{
+	//		num = (double)(1 + rand() % 5) / 25;
+	//		(*res)[row][col] = (koefs[0][col] - ((1 + rand() % 5) * num) + (rand() % 10) * num);
+	//	}
+	//}
+
+	for (int row = 0; row < res->getRows(); ++row)
+	{
+		for (int col = 1; col < res->getCols(); ++col)
+		{
+			(*res)[row][col] = (1 + rand() % 1000)*pow(-1, rand());
+			(*res)[row][0] += (*res)[row][col] * koefs[0][col];
+
+		}
+		(*res)[row][0] += koefs[0][0];
+		(*res)[row][0] += ((rand() % 5))*pow(-1, rand());
+
+	}
+
+	return *res;
+}
+
 CMatrix & CAlgorithms::LinRegression()
 {
 	CMatrix * res = new CMatrix;
+	CMatrix * koefs = new CMatrix(1, 3, 0);
+
+	std::cin >> *koefs;
+	*matr = randPoints(*koefs);
+	std::cout << std::endl << *matr << std::endl;
 
 	CMatrix *A = new CMatrix;
 	CMatrix *B = new CMatrix;
@@ -543,22 +556,12 @@ CMatrix & CAlgorithms::LinRegression()
 	*A = getSumMatr();
 	*B = getFreeMembMatr();
 
-	*res = ~(*A) * (*B);
+	std::cout << *A << std::endl;
+	std::cout << *B << std::endl;
 
-	// try 1
-	/*CMatrix * leadCord = new CMatrix(1, matr->getCols());
-
-	for (size_t col = 0; col < matr->getCols(); col++)
-	{
-	(*leadCord)[0][col] = (*matr)[0][col];
-	(*matr)[0][col] = 1;
-	}
-
-
-
-	*res = getReverce((~(*matr) * (*matr))) * ~(*matr) * (*leadCord);
-	*/
-
+	*matr = (*A) | (*B);
+	std::cout << *matr;
+	*res = GaussianElimination();
 	return *res;
 }
 
