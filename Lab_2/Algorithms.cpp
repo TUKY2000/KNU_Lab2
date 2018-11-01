@@ -231,6 +231,7 @@ std::vector<double>  CAlgorithms::JakobiMethod()
 		std::cout << *matr;
 		std::cout << "\n";
 		cleanZeroElements(precision);
+		calculateJakobiFault(fault);
 		if (i > 40) break; // crutch // unstopable cycle, check fault, check findMax
 	}
 	JakobiSolution(res);
@@ -240,42 +241,7 @@ std::vector<double>  CAlgorithms::JakobiMethod()
 // check architecture
 void CAlgorithms::JakobiFindMax( double &max, size_t &maxRow, size_t &maxCol)
 {
-	//for (int col = 1; col < matr->getCols(); col++)
-	//{
-	//	for (int row = col; row < matr->getRows() - col; row++)
-	//	{
-	//			if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
-	//			{
-	//				max = (*matr)[row][col];
-	//				maxRow = row;
-	//				maxCol = col;
-	//			}
-	//			else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
-	//			{
-	//				max = -(*matr)[row][col];
-	//				maxRow = row;
-	//				maxCol = col;
-	//			}
-	//		}
-	//	}
-	//for (int row = 1; row < matr->getRows(); row++)
-	//{
-	//	for (int col = row; col < matr->getCols() - row; col++)
-	//	{
-	//		if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
-	//		{
-	//			max = (*matr)[row][col];
-	//			maxRow = row;
-	//			maxCol = col;
-	//		}
-	//		else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
-	//		{
-	//			max = -(*matr)[row][col];
-	//			maxRow = row;
-	//			maxCol = col;
-	//		}
-	//	}
-	//}
+
 	for (int row = 0; row < matr->getCols(); row++)
 	{
 		for (int col = 0; col < matr->getCols(); col++)
@@ -362,17 +328,9 @@ void CAlgorithms::JakobiTurnMatrix( CMatrix &turnMatr)
 	*temp = (~turnMatr) * (*matr);
 	
 	*temp = (*temp) * (turnMatr);
-
-	//makeZeroMatrix(*matr); // ?
-
-	//*temp = (*matr) * (turnMatr);
 	
 	double fault = 0.0;
-	calculateJakobiFault(fault);
 	*matr = *temp;
-	makeZeroMatrix(*temp);
-	//*temp = (turnMatr) * (turnMatr);
-	
 	if (temp!= nullptr) delete temp;
 }
 

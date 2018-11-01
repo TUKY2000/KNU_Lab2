@@ -66,15 +66,17 @@ int main()
 	cin >> iRows;
 	cout << endl;
 	m->setSize(iRows, iCols);
-	//cin >> *m;
+	cin >> *m;
+
+
 	//cout << *m;
-	CAlgorithms * newAlg = new CAlgorithms(*m);
+	//CAlgorithms * newAlg = new CAlgorithms(*m);
 
 	//cout << ~(*m);
 
-	*m = newAlg->LinRegression();
+	//*m = newAlg->LinRegression();
 
-	cout << endl << *m;
+	//cout << endl << *m;
 
 	//AnalysisSimulator(*m);
 
@@ -99,7 +101,6 @@ void GaussianElimination_( CMatrix & m)
 	cout << m;
 	cout << ")" << endl;
 	if (gaussTest != nullptr)	delete gaussTest;
-
 }
 void JakobiMethod_(const CMatrix & m)
 {
