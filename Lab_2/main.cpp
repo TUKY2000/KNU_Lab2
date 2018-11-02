@@ -1,4 +1,3 @@
-#include "Matrix.h"
 #include "Algorithms.h"
 #include <iostream>
 using namespace std;
@@ -12,73 +11,49 @@ enum Commands { outputMatrix = 1, GaussianElimination, Kachmage, Jakobi, linRegr
 // Returns:		- 
 // Parameter:	-
 //************************************
-Commands inputCommand();
+CMatrix (*chooseCmd())(void);
 
 //************************************
 // Function:	output all commands
 // Returns:		- 
 // Parameter:	-
 //************************************
-void printCommands();
+void printCommands(const CMatrix & res);
 
 //************************************
 // Function:	do command (method) that user have chosen
 // Returns:		bool value that means is user still working with program or not
 // Parameter:	command, matrix
 //************************************
-bool doCommand(Commands command, CMatrix &matr);
+CMatrix & doCommand(CMatrix (*pfunc)(void));
+
 
 //************************************
 // Function:	compare all functions do_co
 // Returns:		bool value that means is user still working with program or not
 // Parameter:	command, matrix
 //************************************
-bool AnalysisSimulator(CMatrix &matr);
+bool AnalysisSimulator();
+
+
+void printRes(const CMatrix & res);
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 
 
 void GaussianElimination_(const CMatrix & m);
 
 void JakobiMethod_(const CMatrix & m);
 
+CMatrix gausseMeth();
+CMatrix kachmageMeth();
+CMatrix jacobiMeth();
+CMatrix linealRegr();
+
+
 int main()
 {
-	CMatrix *m = new CMatrix;
-	//CMatrix *A = new CMatrix(3, 3);
-	//CMatrix *B = new CMatrix(3, 3);
-	int iCols, iRows;
-	// user interface
-	cout << "Welcome to system analysis calculator 2018" << endl;
-	//cout << "Please choose the method that you want, press \'h\' for help:" ;
-	//AnalysisSimulator(	matr); // need to fix that
-
-	//cin >> *A;
-	//cin >> *B;
-
-	//*m = *A * *B;
-
-	//cout << *m;
-
-	cout << endl;
-	cout << "Please input number of columns in your matrix:";
-	cin >> iCols;
-	cout << endl; 
-	cout << "Please input number of rows in your matrix:";
-	cin >> iRows;
-	cout << endl;
-	m->setSize(iRows, iCols);
-	//cin >> *m;
-	//cout << *m;
-	CAlgorithms * newAlg = new CAlgorithms(*m);
-
-	//cout << ~(*m);
-
-	*m = newAlg->LinRegression();
-
-	cout << endl << *m;
-
-	//AnalysisSimulator(*m);
-
-	if (m != nullptr)	delete m;
+	while (AnalysisSimulator())
+	{}
+	
 
 	system("pause");
 
@@ -101,110 +76,53 @@ void GaussianElimination_( CMatrix & m)
 	if (gaussTest != nullptr)	delete gaussTest;
 
 }
-void JakobiMethod_(const CMatrix & m)
-{
-	CAlgorithms * JakobiMethod = nullptr;
-	JakobiMethod = new CAlgorithms(m);
 
-	std::vector<double> res = JakobiMethod->JakobiMethod();
-	cout << endl << "ANSWER: (";
-	for (vector<double>::iterator ITER = res.begin(); ITER < res.end(); ++ITER)
-	{
-		cout << *ITER << " ";
-	}
-	cout << ")" << endl;
-	if (JakobiMethod != nullptr)	delete JakobiMethod;
 
-}
-
-Commands inputCommand()
+CMatrix(*chooseCmd())(void)
 {
 	int command_ = 0;
 	cin >> command_;
 	switch (command_)
 	{
-	case 1:
-		command = outputMatrix;
-		break;
-	case 2:
-		command = GaussianElimination;
-		break;
-	case 3:
-		command = Kachmage;
-		break;
-	case 4:
-		command = Jakobi;
-		break;
-	case 5:
-		command = linRegressParametr;
-		break;
-	case 6:
-		command = finishWork;
-		break;
-	default:
-		cout << "Wrong command." << endl;
-		break;
+	case 1: return gausseMeth;		break;
+	case 2: return kachmageMeth;	break;
+	case 3: return jacobiMeth;		break;
+	case 4: return linealRegr;		break;
+	default: return nullptr;		break;
 	}
-	return command;
 }
 
 void printCommands()
 {
 	cout << "Choose command: " << endl;
-	cout << "To output matrix press 1" << endl;
-	cout << "To calculate by Gaussian elimination press 2" << endl;
-	cout << "To calculate by Kachmage method press 3" << endl;
-	cout << "To calculate by Jakobi method press 4" << endl;
-	cout << "To calculate linear regression press 5" << endl;
-	cout << "To finish work with system analysis calculator 2018 press 6 " << endl;
+	//	cout << "To output matrix press 1" << endl;
+	cout << "To calculate by Gaussian elimination press 1" << endl;
+	cout << "To calculate by Kachmage method press 2" << endl;
+	cout << "To calculate by Jakobi method press 3" << endl;
+	cout << "To calculate linear regression press 4" << endl;
 
 }
 
-bool doCommand(Commands command, CMatrix &matr)
+CMatrix & doCommand(CMatrix (*pfunc)(void))
 {
+	return (*pfunc)();
+}
 
-
-	switch (command)
-	{
-	case outputMatrix:
-		cout << matr;
-		break;
-	case GaussianElimination:
-		cout << "We will add that function in nearest update" << endl;
-		break;
-	case Kachmage:
-		cout << "We will add that function in nearest update" << endl;
-		break;
-	case  Jakobi:
-		//matr.symmetricalRandomMatrixValues(matr);
-		cin >> matr;
-		if (matr.isSymmetrical(matr))
-		{
-			JakobiMethod_(matr);
-		}
-		else cout << " matrix isn't symmetrical" << endl;
-		break;
-	case linRegressParametr:
-		cout << " ALMOST DONE LINEAL REGRESSION @!!!@" << endl;
-		break;
-	case finishWork:
-		cout << "Work was ended." << endl;
-		return false;
-		break;
-	default:
-
-		break;
-	}
-	return command;
-
-
+void printCommands(const CMatrix & res)
+{
+	cout << "ANSWER: " << res << endl;
 }
 
 
-bool AnalysisSimulator(CMatrix &matr)
+
+
+
+
+
+bool AnalysisSimulator()
 {
 	printCommands();
-	inputCommand();
-	return doCommand(command, matr);
+	printRes(doCommand(chooseCmd()));
+	return false;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////// 

@@ -201,7 +201,7 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
+			(*matrNew)[row][col] = (mass + row * rows)[col] - other[row][col];
 
 	return *matrNew;
 }
@@ -264,15 +264,24 @@ double * CMatrix::operator[](const int & row) const
 
 std::ostream & operator<<(std::ostream & output, const CMatrix & matr)	//	!!!
 {
-	for (size_t row = 0; row < matr.getRows(); ++row)
+
+	size_t row = 0
+		, col = 0;
+	for (; row < matr.getRows() - 1; ++row)
 	{
-		for (size_t col = 0; col < matr.getCols(); ++col)
+		output << '|';
+		for (col = 0; col < matr.getCols() - 1; ++col)
 		{
 			output << matr[row][col] << "\t";
 		}
-		output << "\n";
+		output << matr[row][col] << "|\n";
 	}
-
+	output << '|';
+	for (col = 0; col < matr.getCols() - 1; ++col)
+	{
+		output << matr[row][col] << "\t";
+	}
+	output << matr[row][col] << '|';
 	return output;
 }
 
@@ -294,7 +303,7 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 	return input;
 }
 // Jakobi
-bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter 
+bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,mistake with parameter 
 {
 	bool result = true;
 	//size_t cols = matr->getCols;
