@@ -159,8 +159,6 @@ void printCommands()
 
 bool doCommand(Commands command, CMatrix &matr)
 {
-
-
 	switch (command)
 	{
 	case outputMatrix:
