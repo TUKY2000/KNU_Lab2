@@ -1,5 +1,4 @@
 #pragma once
-// моя
 #include "Matrix.h"
 #include <vector>
 
@@ -16,6 +15,7 @@ public:
 	void downlMatr(const int & rows, const int & cols);
 
 
+
 	//void SoLEtoMATR(const std::istream & input);
 
 	//************************************
@@ -23,29 +23,28 @@ public:
 	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	CMatrix GaussianElimination();
-
-
-	//************************************
-	// Function:	find coefficients of the line function ................
-	// Returns:		CMatrix 
-	// Parameter:	void
-	//************************************
-	CMatrix LinRegression() const;
+	CMatrix & GaussianElimination();
 
 	//************************************
 	// Function:	Doing all Jakobi method
 	// Returns:		return massive of own values !
 	// Parameter:	
 	//************************************
-	std::vector<double>  JakobiMethod();
+	CMatrix & JakobiMethod();
 
 	//************************************
-	// Function:	find coefficients of the line function ................
+	// Function:	find coefficients of the line function 
 	// Returns:		CMatrix 
 	// Parameter:	void
 	//************************************
 	CMatrix & LinRegression();
+
+	//************************************
+	// Function:	solve the matrix by Kachmage method
+	// Returns:		CMatrix  
+	// Parameter:	void
+	//************************************
+	CMatrix & KachmageMethod();
   
 private:
 		
@@ -138,7 +137,7 @@ private:
 	// Returns:		-
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
-	void JakobiSolution(std::vector<double> &res);
+	CMatrix & JakobiSolution();
 
 	//***************************************************
 	// Function:	making Identity matrix
@@ -171,18 +170,50 @@ private:
 
 //	Lineal Regression
 
+	//***************************************************
+	// Function:	build the matrix c_ij = summ_(i->M)(y * x_j)
+	// Returns:		CMatrix &
+	// Parameter:	void 
+	//***************************************************
 	CMatrix & getFreeMembMatr();
 
+	//***************************************************
+	// Function:	build the matrix c_kj = summ_(i->M)(x_k * x_j)
+	// Returns:		CMatrix &
+	// Parameter:	void
+	//***************************************************
 	CMatrix & getSumMatr();
 
-	CMatrix & randPoints(const CMatrix & koefs);
-
-	double dispRow(const double && row) const;
-
-	double dispRows(const double && row1, const double && row2) const;
+	//***************************************************
+	// Function:	generate random pointers that are not far from the function which we need to find
+	// Returns:		CMatrix &
+	// Parameter:	matrix(vector) of coefficients of function
+	//***************************************************
+	CMatrix & randPointers(const CMatrix & coeffs);
 
 // Kachmage
-	//double KachmageMethod(CMatrix & b);	
+
+	//***************************************************
+	// Function:	calculate the norma of vector
+	// Returns:		double
+	// Parameter:	matrix(vector) 
+	//***************************************************
+	double norma(const CMatrix & vect);
+
+	//***************************************************
+	// Function:	create matrix(vector) which is one of the rows of the main matrix
+	// Returns:		CMatrix &
+	// Parameter:	number of row which will be the matrix
+	//***************************************************
+	CMatrix & getMRow(const unsigned int & row);
+
+	//***************************************************
+	// Function:	calculate a skalar of two matrices(vectors)
+	// Returns:		double
+	// Parameter:	two matrix
+	//***************************************************
+	double skalar(const CMatrix & A, const CMatrix & B);
+
 
 };
 

@@ -38,6 +38,7 @@ public:
 	friend std::istream & operator >> (std::istream & input, CMatrix & matr);
 		
 	double	* operator [] (const int & row) const;
+
 	void randomMatrixValues(CMatrix matr);
 
 	
@@ -45,13 +46,13 @@ public:
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
 	// Returns:		bool value
-	// Parameter:	double array (all matrix value)  
+	// Parameter:	matrix 
 	//************************************
 	bool isSymmetrical(CMatrix & other);
 
 	CMatrix & unitary(const unsigned int & dim);
 
-	void symmetricalRandomMatrixValues(CMatrix matr); // we are changing matr here
+	void symmetricalRandomMatrixValues(CMatrix &matr); // we are changing matr here
 
 private:	
 
@@ -66,4 +67,3 @@ private:
 
 	double * mass = nullptr;
 };
-

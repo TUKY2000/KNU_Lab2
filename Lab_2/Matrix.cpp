@@ -76,7 +76,7 @@ void CMatrix::setElemNum(const double num)
 }
 
 // added for Jakobi method 
-void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
+void CMatrix::symmetricalRandomMatrixValues(CMatrix &matr)
 {
 	
 	for (size_t col = 0; col < matr.getCols(); ++col)
@@ -84,7 +84,7 @@ void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
 
 		for (size_t row = 0; row < matr.getRows() - col; ++row)
 		{
-			matr[col][row] = ((-1)^rand()) *(rand()%60);
+			matr[col][row] = (( -1)^rand()) *(rand()%5);
 			matr[row][col] = matr[col][row];
 		}
 
@@ -127,7 +127,7 @@ void CMatrix::randomMatrixValues(CMatrix matr)
 
 		for (size_t row = 0; row < matr.getRows(); ++row)
 		{
-			matr[col][row] = ((-1) ^ rand()) *(rand() % 60);
+			matr[col][row] = ((-1) ^ rand()) *(rand() % 5);
 		}
 
 	}
@@ -193,6 +193,7 @@ CMatrix & CMatrix::operator+(const CMatrix & other)
 
 
 
+
 CMatrix & CMatrix::operator-(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
@@ -201,7 +202,7 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
+			(*matrNew)[row][col] = (mass + row * rows)[col] - other[row][col];
 
 	return *matrNew;
 }
@@ -264,15 +265,23 @@ double * CMatrix::operator[](const int & row) const
 
 std::ostream & operator<<(std::ostream & output, const CMatrix & matr)	//	!!!
 {
-	for (size_t row = 0; row < matr.getRows(); ++row)
+	size_t row = 0
+		, col = 0;
+	for (; row < matr.getRows() - 1; ++row)
 	{
-		for (size_t col = 0; col < matr.getCols(); ++col)
+		output << '|';
+		for (col = 0; col < matr.getCols() - 1; ++col)
 		{
 			output << matr[row][col] << "\t";
 		}
-		output << "\n";
+		output << matr[row][col] << "|\n";
 	}
-
+	output << '|';
+	for (col = 0; col < matr.getCols() - 1; ++col)
+	{
+		output << matr[row][col] << "\t";
+	}
+	output << matr[row][col] << '|';
 	return output;
 }
 
@@ -284,7 +293,7 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 		std::cout << "Please input row number " << row << "." << std::endl;
 		for (size_t col = 0; col < matr.getCols(); ++col)
 		{
-			std::cout << "please input value of x[" << row << "][" << col << "] " << ":";
+			std::cout << "Please input value of x[" << row << "][" << col << "] " << ":";
 			input >> snum;
 			matr[row][col] = std::atol(snum.c_str());
 			std::cout << std::endl;
@@ -297,7 +306,6 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter 
 {
 	bool result = true;
-	//size_t cols = matr->getCols;
 	for (int col = 0; col < other.getCols(); col++)
 	{
 		for (int row = col; row < other.getRows() - col; row++)
@@ -309,7 +317,6 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter
 			}
 		}
 	}
-
 
 	return result;
 }
