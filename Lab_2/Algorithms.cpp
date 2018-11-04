@@ -1,3 +1,9 @@
+//
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
 #include "Algorithms.h"
 #include <cmath>
 #include <iostream>
@@ -234,7 +240,7 @@ CMatrix &   CAlgorithms::JakobiMethod()
 		cleanZeroElements(precision);
 		calculateJakobiFault(fault);
 	}
-	Cmatrix * res = nullptr;
+	CMatrix * res = nullptr;
 	res = &JakobiSolution();
 	return *res;
 }
@@ -535,9 +541,7 @@ double CAlgorithms::norma(const CMatrix & vect)
 CMatrix & CAlgorithms::getMRow(const unsigned int & row)
 {
 	CMatrix * res = new CMatrix(1, matr->getCols() - 1);
-
 	double val = 0;	//	time val for testing
-
 	for (unsigned int col = 0; col < res->getCols(); ++col)
 	{
 		val = (*matr)[row][col];
@@ -560,6 +564,5 @@ double CAlgorithms::skalar(const CMatrix & A, const CMatrix & B)
 		val2 = B[0][i];
 		res += val1 * val2;
 	}
-
 	return res;
 }

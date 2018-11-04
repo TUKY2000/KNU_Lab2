@@ -1,3 +1,9 @@
+//
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
 #pragma once
 #include "Matrix.h"
 #include <vector>
@@ -13,10 +19,6 @@ public:
 	void downlMatr(const CMatrix & _matr);
 
 	void downlMatr(const int & rows, const int & cols);
-
-
-
-	//void SoLEtoMATR(const std::istream & input);
 
 	//************************************
 	// Function:	solve the matrix by Gaussian method
@@ -128,14 +130,14 @@ private:
 	//***************************************************
 	// Function:	turn matrix 
 	// Returns:		-
-	// Parameter:	double array (all matrix value)  
+	// Parameter:	matrix 
 	//***************************************************
 	void JakobiTurnMatrix( CMatrix &turnMatr);
 
 	//***************************************************
 	// Function:	input solution in vector res 
-	// Returns:		-
-	// Parameter:	double array (all matrix value)  
+	// Returns:		matrix (n,1) with result
+	// Parameter:	matrix  
 	//***************************************************
 	CMatrix & JakobiSolution();
 
@@ -213,9 +215,4 @@ private:
 	// Parameter:	two matrix
 	//***************************************************
 	double skalar(const CMatrix & A, const CMatrix & B);
-
-
 };
-
-
-

@@ -1,3 +1,9 @@
+//
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
 #include "Matrix.h"
 #include <string>
 #include <iostream>
@@ -8,7 +14,6 @@ CMatrix::CMatrix()
 {
 	create();
 }
-
 
 CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols)
 	: cols(_cols)
@@ -45,13 +50,11 @@ CMatrix::CMatrix(CMatrix && other)
 	}
 }
 
-
 CMatrix::~CMatrix()
 {
 	if (mass != nullptr)
 		delete mass;
 }
-
 
 
 void CMatrix::create()
@@ -78,27 +81,20 @@ void CMatrix::setElemNum(const double num)
 // added for Jakobi method 
 void CMatrix::symmetricalRandomMatrixValues(CMatrix &matr)
 {
-	
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
-
 		for (size_t row = 0; row < matr.getRows() - col; ++row)
 		{
 			matr[col][row] = (( -1)^rand()) *(rand()%5);
 			matr[row][col] = matr[col][row];
 		}
-
 	}
-
-
 }
 
 CMatrix & CMatrix::operator|(const CMatrix & other)
 {
 	if (rows != other.getRows()) throw std::logic_error("");
-
 	CMatrix * res = new CMatrix(rows, cols + other.getCols(), 0);
-
 	double num = 0;
 	size_t col = 0;
 	for (size_t row = 0; row < rows; ++row)
@@ -115,7 +111,6 @@ CMatrix & CMatrix::operator|(const CMatrix & other)
 			(*res)[row][col] = other[row][col - cols];
 		}
 	}
-
 	return *res;
 }
 
@@ -124,16 +119,12 @@ void CMatrix::randomMatrixValues(CMatrix matr)
 	int a = 48;
 	for (size_t col = 0; col < matr.getCols(); ++col)
 	{
-
 		for (size_t row = 0; row < matr.getRows(); ++row)
 		{
 			matr[col][row] = ((-1) ^ rand()) *(rand() % 5);
 		}
-
 	}
-
 }
-
 
 unsigned int const CMatrix::getRows() const
 {
@@ -157,24 +148,19 @@ CMatrix & CMatrix::operator=(const CMatrix & other)
 	cols = other.getCols();
 	rows = other.getRows();
 	create();
-
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(mass + row * cols)[col] = other[row][col];
-
 	return *this;
 }
-
 
 bool CMatrix::operator==(const CMatrix & other) const
 {
 	if (mass == nullptr) return false;
-
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			if ((mass + row * rows)[col] != other[row][col])
 				return false;
-
 	return true;
 }
 
@@ -182,28 +168,21 @@ CMatrix & CMatrix::operator+(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
-
 	return *matrNew;
 }
-
-
-
 
 CMatrix & CMatrix::operator-(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(*matrNew)[row][col] = (mass + row * rows)[col] - other[row][col];
-
 	return *matrNew;
 }
 
@@ -211,9 +190,7 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 {
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
-
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 	{
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
@@ -224,8 +201,6 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 			}
 		}
 	}
-
-
 	return *matrNew;
 }
 
@@ -239,14 +214,12 @@ CMatrix & CMatrix::operator*(const double & num)
 			(*matrNew)[row][col] = (mass + row * rows)[col] * num;
 		}
 	}
-
 	return *matrNew;
 }
 
 CMatrix & CMatrix::operator~()
 {
 	CMatrix *res = new CMatrix(cols, rows, 0);
-
 	for (unsigned int row = 0; row < rows; ++row)
 	{
 		for (unsigned int col = 0; col < cols; ++col)
@@ -254,7 +227,6 @@ CMatrix & CMatrix::operator~()
 			(*res)[col][row] = (mass + row * cols)[col];
 		}
 	}
-
 	return *res;
 }
 
@@ -299,9 +271,9 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 			std::cout << std::endl;
 		}
 	}
-
 	return input;
 }
+
 // Jakobi
 bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter 
 {
@@ -317,7 +289,6 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,istake with parameter
 			}
 		}
 	}
-
 	return result;
 }
 
@@ -329,6 +300,5 @@ CMatrix & CMatrix::unitary(const unsigned int & dim)
 	{
 		(*res)[row][row] = 1;
 	}
-
 	return *res;
 }

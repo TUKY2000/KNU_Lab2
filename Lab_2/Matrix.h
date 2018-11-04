@@ -1,7 +1,12 @@
+//
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
 #pragma once
 
 #include <ostream>
-
 
 class CMatrix
 {
@@ -39,9 +44,12 @@ public:
 		
 	double	* operator [] (const int & row) const;
 
+	//************************************
+	// Function:	input random values in matrix
+	// Returns:		-
+	// Parameter:	matrix 
+	//************************************
 	void randomMatrixValues(CMatrix matr);
-
-	
 
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
@@ -52,7 +60,12 @@ public:
 
 	CMatrix & unitary(const unsigned int & dim);
 
-	void symmetricalRandomMatrixValues(CMatrix &matr); // we are changing matr here
+	//************************************
+	// Function:	symmetrically input random values in matrix
+	// Returns:		-
+	// Parameter:	matrix 
+	//************************************
+	void symmetricalRandomMatrixValues(CMatrix &matr);
 
 private:	
 
