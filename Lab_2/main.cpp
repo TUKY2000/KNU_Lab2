@@ -71,18 +71,7 @@ void LinRegression_(CMatrix & matr);
 int main()
 {
 	CMatrix *matr = new CMatrix;
-	int iCols, iRows;
-	// user interface
 	cout << "Welcome to system analysis calculator 2018" << endl;
-	cout << endl;
-	cout << "Please input number of columns in your matrix:";
-	cin >> iCols;
-	cout << endl; 
-	cout << "Please input number of rows in your matrix:";
-	cin >> iRows;
-	cout << endl;
-	matr->setSize(iRows, iCols);
-
 	AnalysisSimulator(*matr);
 
 	if (matr != nullptr)	delete matr;
@@ -223,7 +212,17 @@ void printCommands()
 
 bool AnalysisSimulator(CMatrix &matr)
 {
+	int iCols, iRows;
 	printCommands();
 	inputCommand();
+	cout << endl;
+	cout << "Please input number of columns in your matrix:";
+	cin >> iCols;
+	cout << endl;
+	cout << "Please input number of rows in your matrix:";
+	cin >> iRows;
+	cout << endl;
+	matr.setSize(iRows, iCols);
+
 	return doCommand(command, matr);
 }
