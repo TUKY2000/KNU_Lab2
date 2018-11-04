@@ -1,9 +1,10 @@
 //
-// Created By Ivan Martsilenko and Arthur Onishkevich
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
+
 #include "Algorithms.h"
 #include <cmath>
 #include <iostream>
@@ -226,17 +227,10 @@ CMatrix &   CAlgorithms::JakobiMethod()
 		
 		max = 0.0;
 		// Searching max element.
-		std::cout << "Jakobi iteration:" << i << "\n";
 		JakobiFindMax(max, maxRow, maxCol);
 		if (max < precision) break; // need to end while if Jakobi Method finished? but fault still bigger than precision
-		std::cout << "max = " << max;
 		prepareTurnMatr(maxRow, maxCol, *turnMatr);
-		std::cout << "\n" << *turnMatr << "\n";
 		JakobiTurnMatrix(*turnMatr);
-		i++;
-		std::cout << "\n";
-		std::cout << *matr;
-		std::cout << "\n";
 		cleanZeroElements(precision);
 		calculateJakobiFault(fault);
 	}

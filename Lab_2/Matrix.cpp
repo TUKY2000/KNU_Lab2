@@ -1,9 +1,10 @@
 //
-// Created By Ivan Martsilenko and Arthur Onishkevich
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
+
 #include "Matrix.h"
 #include <string>
 #include <iostream>

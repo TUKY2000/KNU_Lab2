@@ -1,9 +1,10 @@
 //
-// Created By Ivan Martsilenko and Arthur Onishkevich
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
+
 #include "Algorithms.h"
 #include <iostream>
 using namespace std;
@@ -23,6 +24,7 @@ Commands inputCommand();
 // Parameter:	-
 //************************************
 void printCommands();
+
 
 //************************************
 // Function:	do command (method) that user have chosen
@@ -203,13 +205,12 @@ bool doCommand(Commands command, CMatrix &matr)
 
 		break;
 	}
-	return command;
 
+	return command;
 
 }
 
-
-void printCommans()
+void printCommands()
 {
 	cout << "Choose command: " << endl;
 	cout << "To output matrix press 1" << endl;
