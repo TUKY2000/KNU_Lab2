@@ -1,5 +1,11 @@
+//
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
+
 #pragma once
-// моя
 #include "Matrix.h"
 #include <vector>
 
@@ -15,9 +21,6 @@ public:
 
 	void downlMatr(const int & rows, const int & cols);
 
-
-	//void SoLEtoMATR(const std::istream & input);
-
 	//************************************
 	// Function:	solve the matrix by Gaussian method
 	// Returns:		CMatrix  
@@ -25,7 +28,7 @@ public:
 	//************************************
 	CMatrix & GaussianElimination();
 
-		//************************************
+	//************************************
 	// Function:	Doing all Jakobi method
 	// Returns:		return massive of own values !
 	// Parameter:	
@@ -45,11 +48,11 @@ public:
 	// Parameter:	void
 	//************************************
 	CMatrix & KachmageMethod();
-  
+
 private:
-		
+
 	CMatrix * matr = nullptr;
-	//	std::vector<double> Ai;
+	CMatrix * original = nullptr;
 
 	//************************************
 	// Function:	reduce the matrix to triangular shape (first part of Gaussian method)
@@ -109,7 +112,7 @@ private:
 
 
 
-// Jakobi 
+	// Jakobi 
 
 	//***************************************************
 	// Function:	Searching max element that not on the diagonal
@@ -117,7 +120,7 @@ private:
 	// Parameter:	double array (all matrix value)  
 	//***************************************************
 	void JakobiFindMax(double &max, size_t &maxRow, size_t &maxCol);
-	
+
 	//***************************************************
 	// Function:	prepare Turn matrix for the next iteration
 	// Returns:		-
@@ -128,14 +131,14 @@ private:
 	//***************************************************
 	// Function:	turn matrix 
 	// Returns:		-
-	// Parameter:	double array (all matrix value)  
+	// Parameter:	matrix 
 	//***************************************************
-	void JakobiTurnMatrix( CMatrix &turnMatr);
+	void JakobiTurnMatrix(CMatrix &turnMatr);
 
 	//***************************************************
 	// Function:	input solution in vector res 
-	// Returns:		-
-	// Parameter:	double array (all matrix value)  
+	// Returns:		matrix (n,1) with result
+	// Parameter:	matrix  
 	//***************************************************
 	CMatrix & JakobiSolution();
 
@@ -168,7 +171,9 @@ private:
 	//***************************************************
 	void cleanZeroElements(double precision);
 
-//	Lineal Regression
+
+
+	//	Lineal Regression
 
 	//***************************************************
 	// Function:	build the matrix c_ij = summ_(i->M)(y * x_j)
@@ -184,15 +189,15 @@ private:
 	//***************************************************
 	CMatrix & getSumMatr();
 
-	//***************************************************
-	// Function:	generate random pointers that are not far from the function which we need to find
-	// Returns:		CMatrix &
-	// Parameter:	matrix(vector) of coefficients of function
-	//***************************************************
-	CMatrix & randPointers(const CMatrix & coeffs);
+	////***************************************************
+	//// Function:	generate random pointers that are not far from the function which we need to find
+	//// Returns:		CMatrix &
+	//// Parameter:	matrix(vector) of coefficients of function
+	////***************************************************
+	//CMatrix & randPointers(const CMatrix & coeffs);
 
-// Kachmage
-	
+	// Kachmage
+
 	//***************************************************
 	// Function:	calculate the norma of vector
 	// Returns:		double
@@ -214,7 +219,5 @@ private:
 	//***************************************************
 	double skalar(const CMatrix & A, const CMatrix & B);
 
+	void checkSolution(const CMatrix & result);
 };
-
-
-

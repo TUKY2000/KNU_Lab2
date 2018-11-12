@@ -1,3 +1,10 @@
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
+
+
 #include "Matrix.h"
 #include <string>
 #include <iostream>
@@ -8,7 +15,6 @@ CMatrix::CMatrix()
 {
 	create();
 }
-
 
 CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols)
 	: cols(_cols)
@@ -45,13 +51,11 @@ CMatrix::CMatrix(CMatrix && other)
 	}
 }
 
-
 CMatrix::~CMatrix()
 {
 	if (mass != nullptr)
 		delete mass;
 }
-
 
 
 void CMatrix::create()
@@ -76,29 +80,22 @@ void CMatrix::setElemNum(const double num)
 }
 
 // added for Jakobi method 
-void CMatrix::symmetricalRandomMatrixValues(CMatrix matr)
+void CMatrix::symmetricalRandomMatrixValues()
 {
-	
-	for (size_t col = 0; col < matr.getCols(); ++col)
+	for (size_t col = 0; col < cols; ++col)
 	{
-
-		for (size_t row = 0; row < matr.getRows() - col; ++row)
+		for (size_t row = 0; row < rows - col; ++row)
 		{
-			matr[col][row] = ((-1)^rand()) *(rand()%60);
-			matr[row][col] = matr[col][row];
+			(mass + row * cols)[col] = ((-1) ^ rand()) *(rand() % 5);
+			(mass + row * cols)[row] = (mass + row * cols)[col];
 		}
-
 	}
-
-
 }
 
 CMatrix & CMatrix::operator|(const CMatrix & other)
 {
 	if (rows != other.getRows()) throw std::logic_error("");
-
 	CMatrix * res = new CMatrix(rows, cols + other.getCols(), 0);
-
 	double num = 0;
 	size_t col = 0;
 	for (size_t row = 0; row < rows; ++row)
@@ -115,25 +112,19 @@ CMatrix & CMatrix::operator|(const CMatrix & other)
 			(*res)[row][col] = other[row][col - cols];
 		}
 	}
-
 	return *res;
 }
 
-void CMatrix::randomMatrixValues(CMatrix matr)
+void CMatrix::randomMatrixValues()
 {
-	int a = 48;
-	for (size_t col = 0; col < matr.getCols(); ++col)
+	for (size_t col = 0; col < cols; ++col)
 	{
-
-		for (size_t row = 0; row < matr.getRows(); ++row)
+		for (size_t row = 0; row < rows; ++row)
 		{
-			matr[col][row] = ((-1) ^ rand()) *(rand() % 60);
+			(mass + row * cols)[col] = ((-1) ^ rand()) *(rand() % 5);
 		}
-
 	}
-
 }
-
 
 unsigned int const CMatrix::getRows() const
 {
@@ -157,24 +148,19 @@ CMatrix & CMatrix::operator=(const CMatrix & other)
 	cols = other.getCols();
 	rows = other.getRows();
 	create();
-
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(mass + row * cols)[col] = other[row][col];
-
 	return *this;
 }
-
 
 bool CMatrix::operator==(const CMatrix & other) const
 {
 	if (mass == nullptr) return false;
-
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			if ((mass + row * rows)[col] != other[row][col])
 				return false;
-
 	return true;
 }
 
@@ -182,16 +168,12 @@ CMatrix & CMatrix::operator+(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
-
 	return *matrNew;
 }
-
-
 
 CMatrix & CMatrix::operator-(const CMatrix & other)
 {
@@ -202,7 +184,6 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
 			(*matrNew)[row][col] = (mass + row * rows)[col] - other[row][col];
-
 	return *matrNew;
 }
 
@@ -210,9 +191,7 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 {
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
-
 	for (size_t row = 0; row < matrNew->getRows(); ++row)
 	{
 		for (size_t col = 0; col < matrNew->getCols(); ++col)
@@ -223,8 +202,6 @@ CMatrix & CMatrix::operator*(const CMatrix & other)
 			}
 		}
 	}
-
-
 	return *matrNew;
 }
 
@@ -238,14 +215,12 @@ CMatrix & CMatrix::operator*(const double & num)
 			(*matrNew)[row][col] = (mass + row * rows)[col] * num;
 		}
 	}
-
 	return *matrNew;
 }
 
 CMatrix & CMatrix::operator~()
 {
 	CMatrix *res = new CMatrix(cols, rows, 0);
-
 	for (unsigned int row = 0; row < rows; ++row)
 	{
 		for (unsigned int col = 0; col < cols; ++col)
@@ -253,7 +228,6 @@ CMatrix & CMatrix::operator~()
 			(*res)[col][row] = (mass + row * cols)[col];
 		}
 	}
-
 	return *res;
 }
 
@@ -264,24 +238,23 @@ double * CMatrix::operator[](const int & row) const
 
 std::ostream & operator<<(std::ostream & output, const CMatrix & matr)	//	!!!
 {
-
 	size_t row = 0
 		, col = 0;
 	for (; row < matr.getRows() - 1; ++row)
 	{
-		output << '|';
+		output << "||";
 		for (col = 0; col < matr.getCols() - 1; ++col)
 		{
 			output << matr[row][col] << "\t";
 		}
-		output << matr[row][col] << "|\n";
+		output << matr[row][col] << "||\n";
 	}
-	output << '|';
+	output << "||";
 	for (col = 0; col < matr.getCols() - 1; ++col)
 	{
 		output << matr[row][col] << "\t";
 	}
-	output << matr[row][col] << '|';
+	output << matr[row][col] << "||";
 	return output;
 }
 
@@ -293,20 +266,19 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 		std::cout << "Please input row number " << row << "." << std::endl;
 		for (size_t col = 0; col < matr.getCols(); ++col)
 		{
-			std::cout << "please input value of x[" << row << "][" << col << "] " << ":";
+			std::cout << "Please input value of x[" << row << "][" << col << "] " << ":";
 			input >> snum;
 			matr[row][col] = std::atol(snum.c_str());
 			std::cout << std::endl;
 		}
 	}
-
 	return input;
 }
+
 // Jakobi
 bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,mistake with parameter 
 {
 	bool result = true;
-	//size_t cols = matr->getCols;
 	for (int col = 0; col < other.getCols(); col++)
 	{
 		for (int row = col; row < other.getRows() - col; row++)
@@ -318,8 +290,6 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,mistake with parameter
 			}
 		}
 	}
-
-
 	return result;
 }
 
@@ -331,6 +301,16 @@ CMatrix & CMatrix::unitary(const unsigned int & dim)
 	{
 		(*res)[row][row] = 1;
 	}
-
 	return *res;
+}
+
+void CMatrix::createGilbertMatrix()
+{
+	for (size_t col = 0; col < cols; ++col)
+	{
+		for (size_t row = 0; row < rows; ++row)
+		{
+			(mass + row * cols)[col] = 1.0 / (row + col + 1);
+		}
+	}
 }

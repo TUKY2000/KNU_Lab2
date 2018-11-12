@@ -1,14 +1,18 @@
+// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+//
+// All rights reserved
+//
 #pragma once
 
 #include <ostream>
-
 
 class CMatrix
 {
 public:
 	CMatrix();
 	~CMatrix();
-	
+
 	CMatrix(const CMatrix & other);
 	CMatrix(CMatrix && other);
 	CMatrix(const unsigned int _rows, const unsigned _cols);
@@ -20,7 +24,7 @@ public:
 	unsigned int const getCols() const;
 
 	CMatrix & operator = (const CMatrix & other);
-	
+
 	bool operator == (const CMatrix & other) const;
 
 	CMatrix & operator + (const CMatrix & other);
@@ -36,34 +40,49 @@ public:
 
 	friend std::ostream & operator << (std::ostream & output, const CMatrix & matr);
 	friend std::istream & operator >> (std::istream & input, CMatrix & matr);
-		
-	double	* operator [] (const int & row) const;
-	void randomMatrixValues(CMatrix matr);
 
-	
+	double	* operator [] (const int & row) const;
+
+	//************************************
+	// Function:	input random values in matrix
+	// Returns:		-
+	// Parameter:	matrix 
+	//************************************
+	void randomMatrixValues();
 
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
 	// Returns:		bool value
-	// Parameter:	double array (all matrix value)  
+	// Parameter:	matrix 
 	//************************************
 	bool isSymmetrical(CMatrix & other);
 
 	CMatrix & unitary(const unsigned int & dim);
 
-	void symmetricalRandomMatrixValues(CMatrix matr); // we are changing matr here
+	//************************************
+	// Function:	symmetrically input random values in matrix
+	// Returns:		-
+	// Parameter:	matrix 
+	//************************************
+	void symmetricalRandomMatrixValues();
 
-private:	
+	//************************************
+	// Function:  input values in matrix that it creates Gilbert
+	// Returns:    -
+	// Parameter:  matrix 
+	//************************************
+	void createGilbertMatrix();
+
+private:
 
 	void create();	//	create massive of pointers-massive of pointers
 
 	void nulify();
 
 	void setElemNum(const double num);
-	
+
 	unsigned int cols
 		, rows;
 
 	double * mass = nullptr;
 };
-
