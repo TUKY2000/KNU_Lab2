@@ -97,6 +97,7 @@ void GaussianElimination_(CMatrix & matr)
 	cout << matr;
 	cout << ")" << endl;
 	if (gaussTest != nullptr)	delete gaussTest;
+
 }
 void KachmageMethod_(CMatrix & matr)
 {
@@ -268,6 +269,7 @@ void printCommands()
 	cout << "To calculate linear regression press 5" << endl;
 	cout << "To finish work with system analysis calculator 2018 press 6 " << endl;
 }
+
 
 bool AnalysisSimulator(CMatrix &matr)
 {
