@@ -252,6 +252,7 @@ bool doCommand(Commands command, CMatrix &matr)
 
 		break;
 	}
+
 	return command;
 }
 

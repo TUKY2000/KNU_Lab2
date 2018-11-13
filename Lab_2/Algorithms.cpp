@@ -1,9 +1,9 @@
-// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
-
 
 #include "Algorithms.h"
 #include <cmath>
@@ -229,20 +229,12 @@ CMatrix &   CAlgorithms::JakobiMethod()
 	int i = 1;
 	while (fault > precision)
 	{
-
 		max = 0.0;
 		// Searching max element.
-		std::cout << "Jakobi iteration:" << i << "\n";
 		JakobiFindMax(max, maxRow, maxCol);
 		if (max < precision) break; // need to end while if Jakobi Method finished? but fault still bigger than precision
-		std::cout << "max = " << max;
 		prepareTurnMatr(maxRow, maxCol, *turnMatr);
-		std::cout << "\n" << *turnMatr << "\n";
 		JakobiTurnMatrix(*turnMatr);
-		i++;
-		std::cout << "\n";
-		std::cout << *matr;
-		std::cout << "\n";
 		cleanZeroElements(precision);
 		calculateJakobiFault(fault);
 	}
@@ -427,6 +419,7 @@ CMatrix & CAlgorithms::getSumMatr()
 			for (int dot = 0; dot < matr->getRows(); ++dot)
 			{
 				(*res)[row][col] += (*matr)[dot][row] * (*matr)[dot][col];
+				
 			}
 		}
 	}
@@ -584,3 +577,27 @@ void CAlgorithms::checkSolution(const CMatrix & result)
 		num = 0;
 	}
 }
+
+// kachmage
+//double CAlgorithms::KachmageMethod(CMatrix & b)
+//{
+	//double precision = 0.00000000001;
+	//CMatrix x(*this, 0);
+	//CMatrix x1(1, N_size, 0);
+	//CMatrix sub(1, N_size, 1);
+	//int j = 0;
+	//while (sub.norma() > precision)
+	//{
+	//	CMatrix ai(*this, j);
+	//	double temp = ((b.M[0][j] - ai.skal_dob(x)) / (ai.norma()*ai.norma()));
+	//	ai = ai * temp;
+	//	x1 = x + ai;
+	//	sub = x1 - x;
+	//	//  cout << sub.norma()<<endl;
+	//	x = x1;
+	//	if (j < N_size - 1)
+	//		j++;
+	//	else j = 0;
+	//}
+	//return x;
+//}

@@ -1,8 +1,10 @@
-// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
+
 #pragma once
 
 #include <ostream>
@@ -48,7 +50,9 @@ public:
 	// Returns:		-
 	// Parameter:	matrix 
 	//************************************
-	void randomMatrixValues();
+	void randomMatrixValues(CMatrix matr);
+
+	
 
 	//************************************
 	// Function:	Checking if matrix is a symmetrical

@@ -1,9 +1,9 @@
-// Created By Ivan Martsilenko and Arthur Onishkevich
+//
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
 //
-
 
 #include "Matrix.h"
 #include <string>
@@ -179,7 +179,6 @@ CMatrix & CMatrix::operator-(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-
 	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)

@@ -1,5 +1,5 @@
 //
-// Created By Ivan Martsilenko and Arthur Onishkevich
+// Created By Ivan Martsilenko and Arthur Onyshkevych
 //
 //
 // All rights reserved
@@ -189,14 +189,14 @@ private:
 	//***************************************************
 	CMatrix & getSumMatr();
 
-	////***************************************************
-	//// Function:	generate random pointers that are not far from the function which we need to find
-	//// Returns:		CMatrix &
-	//// Parameter:	matrix(vector) of coefficients of function
-	////***************************************************
-	//CMatrix & randPointers(const CMatrix & coeffs);
+	//***************************************************
+	// Function:	generate random pointers that are not far from the function which we need to find
+	// Returns:		CMatrix &
+	// Parameter:	matrix(vector) of coefficients of function
+	//***************************************************
+	CMatrix & randPointers(const CMatrix & coeffs);
 
-	// Kachmage
+// Kachmage
 
 	//***************************************************
 	// Function:	calculate the norma of vector
@@ -218,6 +218,4 @@ private:
 	// Parameter:	two matrix
 	//***************************************************
 	double skalar(const CMatrix & A, const CMatrix & B);
-
-	void checkSolution(const CMatrix & result);
 };
