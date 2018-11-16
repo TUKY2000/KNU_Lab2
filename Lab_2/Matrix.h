@@ -29,16 +29,16 @@ public:
 
 	bool operator == (const CMatrix & other) const;
 
-	CMatrix & operator + (const CMatrix & other);
+	CMatrix operator + (const CMatrix & other);
 
-	CMatrix & operator - (const CMatrix & other);
+	CMatrix operator - (const CMatrix & other);
 
-	CMatrix & operator * (const CMatrix & other);
-	CMatrix & operator * (const double & num);
+	CMatrix operator * (const CMatrix & other);
+	CMatrix operator * (const double & num);
 
-	CMatrix & operator | (const CMatrix & other);
+	CMatrix * operator | (const CMatrix & other) const;
 
-	CMatrix & operator ~ ();
+	CMatrix operator ~ ();
 
 	friend std::ostream & operator << (std::ostream & output, const CMatrix & matr);
 	friend std::istream & operator >> (std::istream & input, CMatrix & matr);
@@ -50,9 +50,7 @@ public:
 	// Returns:		-
 	// Parameter:	matrix 
 	//************************************
-	void randomMatrixValues(CMatrix matr);
-
-	
+	void randomMatrixValues();
 
 	//************************************
 	// Function:	Checking if matrix is a symmetrical
@@ -61,7 +59,12 @@ public:
 	//************************************
 	bool isSymmetrical(CMatrix & other);
 
-	CMatrix & unitary(const unsigned int & dim);
+	//************************************
+	// Function:	Checking if matrix is a symmetrical
+	// Returns:		bool value
+	// Parameter:	matrix 
+	//************************************
+	CMatrix unitary(const unsigned int & dim);
 
 	//************************************
 	// Function:	symmetrically input random values in matrix
@@ -88,5 +91,7 @@ private:
 	unsigned int cols
 		, rows;
 
-	double * mass = nullptr;
+
+	double * mass;
+	CMatrix * redcode;
 };

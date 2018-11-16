@@ -1,291 +1,218 @@
-//
-// Created By Ivan Martsilenko and Arthur Onyshkevych
-//
-//
-// All rights reserved
-//
-
 #include "Algorithms.h"
+#include "string"
 #include <iostream>
 #include <ctime>
-#include <limits>
-using namespace std;
 
-enum Commands { outputMatrix = 1, GaussianElimination, Kachmage, Jakobi, linRegressParametr, finishWork } command;
-
-//************************************
-// Function:	convert from inputing char symbol to command type
-// Returns:		- 
-// Parameter:	-
-//************************************
-Commands inputCommand();
-
-//************************************
-// Function:	output all commands
-// Returns:		- 
-// Parameter:	-
-//************************************
-void printCommands();
-
-
-//************************************
-// Function:	do command (method) that user have chosen
-// Returns:		bool value that means is user still working with program or not
-// Parameter:	command, matrix
-//************************************
-bool doCommand(Commands command, CMatrix &matr);
-
-//************************************
-// Function:	compare all functions do_co
-// Returns:		bool value that means is user still working with program or not
-// Parameter:	command, matrix
-//************************************
-bool AnalysisSimulator(CMatrix &matr);
-
-//************************************
-// Function:	doing Gaussian Elimination
-// Returns:		-
-// Parameter:	matrix
-//************************************
-void GaussianElimination_(const CMatrix & matr);
-
-//************************************
-// Function:	doing Kachmage Method
-// Returns:		-
-// Parameter:	matrix
-//************************************
-void KachmageMethod_(CMatrix & matr);
-
-//************************************
-// Function:	doing Jakobi Method
-// Returns:		-
-// Parameter:	matrix
-//************************************
-void JakobiMethod_(const CMatrix & matr);
-
-//************************************
-// Function:	doing Linear Regression
-// Returns:		-
-// Parameter:	matrix
-//************************************
-void LinRegression_(CMatrix & matr);
-
-int main()
+void printRes(const CMatrix * result)
 {
-	cout << fixed;
-
-	cout.precision(5);
-
-	CMatrix *matr = new CMatrix;
-	cout << "Welcome to system analysis calculator 2018" << endl;
-	AnalysisSimulator(*matr);
-
-	if (matr != nullptr)	delete matr;
-
-	system("pause");
-
-	return 0;
+	std::cout << std::endl << "Answer :" << *result << std::endl;
 }
 
-void GaussianElimination_(CMatrix & matr)
+unsigned int chooseInp(const std::string * str)
 {
-	CAlgorithms * gaussTest = nullptr;
-	gaussTest = new CAlgorithms(matr);
+	std::cout << "Choose way to input matrix: " << std::endl
+		<< "1 -> handle" << std::endl
+		<< "2 -> rand values" << std::endl
+		<< "3 -> symetrical rand values" << std::endl
+		<< "4 -> make Gilbert" << std::endl;
 
-	matr = (gaussTest->GaussianElimination());
-	cout << endl << "ANSWER: (";
-	cout << matr;
-	cout << ")" << endl;
-	if (gaussTest != nullptr)	delete gaussTest;
-
-}
-void KachmageMethod_(CMatrix & matr)
-{
-	CAlgorithms * newAlg = new CAlgorithms(matr);
-	matr = (newAlg->KachmageMethod());
-	cout << endl << "ANSWER: (";
-	cout << matr;
-	cout << ")" << endl;
-	if (newAlg != nullptr)	delete newAlg;
-}
-void JakobiMethod_(CMatrix & matr)
-{
-	CAlgorithms * JakobiMethod = nullptr;
-	JakobiMethod = new CAlgorithms(matr);
-	matr = (JakobiMethod->JakobiMethod());
-	cout << endl << "ANSWER: (";
-	cout << matr;
-	cout << ")" << endl;
-	if (JakobiMethod != nullptr)	delete JakobiMethod;
-}
-void LinRegression_(CMatrix & matr)
-{
-	CAlgorithms * newAlg = new CAlgorithms(matr);
-	matr = (newAlg->LinRegression());
-	cout << endl << "ANSWER: (";
-	cout << matr;
-	cout << ")" << endl;
-	if (newAlg != nullptr)	delete newAlg;
+	unsigned short way = 0;
+	std::cin >> way;
+	return way;
 }
 
-Commands inputCommand()
+CMatrix * cinSize()
 {
-	int command_ = 0;
-	cin >> command_;
-	switch (command_)
+	unsigned int cols = 0, rows = 0;
+
+	std::cout << "Input number of columns of your matrix: ";
+	std::cin >> cols;
+
+	std::cout << "Input number of rows of your matrix: ";
+	std::cin >> rows;
+
+	CMatrix * res = new CMatrix(rows, cols);
+	return res;
+}
+
+void cinGilbert(CMatrix * pMatr)
+{
+	pMatr->createGilbertMatrix();
+}
+
+void cinRandSymerical(CMatrix * pMatr)
+{
+	pMatr->symmetricalRandomMatrixValues();
+}
+
+void cinRand(CMatrix * pMatr)
+{
+	pMatr->randomMatrixValues();
+}
+
+void cinHandle(CMatrix * pMatr)
+{
+	std::cin >> *pMatr;
+}
+
+CMatrix * cinMatrix(const std::string pMatrName)
+{
+	void(*pCinMartix)(CMatrix * res) = nullptr;
+	std::cout << "Input matrix [" << *pCinMartix << "]\n";
+	CMatrix * res = cinSize();
+
+	switch (chooseInp(&pMatrName))
 	{
-	case 1:
-		command = outputMatrix;
-		break;
-	case 2:
-		command = GaussianElimination;
-		break;
-	case 3:
-		command = Kachmage;
-		break;
-	case 4:
-		command = Jakobi;
-		break;
-	case 5:
-		command = linRegressParametr;
-		break;
-	case 6:
-		command = finishWork;
-		break;
-	default:
-		cout << "Wrong command." << endl;
-		break;
+	case 1: pCinMartix = cinHandle; break;
+	case 2: pCinMartix = cinRand; break;
+	case 3: pCinMartix = cinRandSymerical; break;
+	case 4: pCinMartix = cinGilbert; break;
+	default: break;
 	}
-	return command;
+
+	pCinMartix(res);
+	return res;
 }
 
-CMatrix randPointers()
+CMatrix * randPointers()
 {
-	cout << "Enter number of parameters of function: ";
+	std::cout << "Enter number of parameters of function: ";
 	unsigned int colsnum = 0;
-	cin >> colsnum;
+	std::cin >> colsnum;
 
 	CMatrix koefs(1, colsnum, 0);
-	cout << "Enter parameters of function" << endl;
-	cin >> koefs;
-	srand(time(0));
-	CMatrix res((20 + rand() % 10), koefs.getCols(), 0);
+	std::cout << "Enter parameters of function" << std::endl;
+	std::cin >> koefs;
+	srand((unsigned int)time(0));
+	CMatrix * res = new CMatrix((20 + rand() % 10), koefs.getCols(), 0);
 
-	for (int row = 0; row < res.getRows(); ++row)
+	for (size_t row = 0; row < res->getRows(); ++row)
 	{
-		for (int col = 1; col < res.getCols(); ++col)
+		for (size_t col = 1; col < res->getCols(); ++col)
 		{
-			(res)[row][col] = (1 + rand() % 300) * pow(-1, rand());
-			(res)[row][0] += (res)[row][col] * koefs[0][col];
+			(*res)[row][col] = (1 + rand() % 300) * pow(-1, rand());
+			(*res)[row][0] += (*res)[row][col] * koefs[0][col];
 
 		}
-		(res)[row][0] += koefs[0][0];
-		(res)[row][0] += ((rand() % 5)) * pow(-1, rand());
-		
+		(*res)[row][0] += koefs[0][0];
 	}
 
 	return res;
 }
 
-void inputMatrForLin(CMatrix &matr)
+CMatrix * cinMatrForLinRegresion()
 {
-	cout << "Please press 1 if you want to input function" << endl <<
-		"Please press 2 if you want to input values" << endl;
-	int inputType;
-	cin >> inputType;
-	if (inputType == 1) matr = randPointers();
-	else if (inputType == 2)  cin >> matr;
+	unsigned int way = 0;
+	std::cout << "Choose way to use method of Linear regression: " << std::endl
+		<< "1 -> find function by pointers" << std::endl
+		<< "2 -> restore function (tou will enter your parameters & programm will generate poinetrs around it)" << std::endl;
 
-	cout << "\n" << "Your matrix :\n" << matr << "\n\n" << endl;
-}
+	std::cin >> way;
 
-void inputMatr(CMatrix &matr)
-{
-	cout << "Please press 1 if you want to randomize matrix values" << endl <<
-		"Please press 2 if you want to symmetrically randomize matrix values" << endl <<
-		"Please press 3 if you want to create gilbert type matrix" << endl <<
-		" or press 4 if you want to input matrix by your own" << endl;
-	int inputType;
-	cin >> inputType;
-	if (inputType == 1) matr.randomMatrixValues();
-	else if (inputType == 2)  matr.symmetricalRandomMatrixValues();
-	else if (inputType == 3)  matr.createGilbertMatrix();
-	else if (inputType == 4)  cin >> matr;
-	else cout << "Wrong command" << endl;
-
-	cout << matr << endl;
-}
-
-bool doCommand(Commands command, CMatrix &matr)
-{
-	switch (command)
+	switch (way)
 	{
-	case outputMatrix:
-		inputMatr(matr);
-		cout << matr;
-		cout << endl;
-		break;
-	case GaussianElimination:
-		inputMatr(matr);
-		GaussianElimination_(matr);
-		break;
-	case Kachmage:
-		inputMatr(matr);
-		KachmageMethod_(matr);
-		break;
-	case  Jakobi:
-		inputMatr(matr);
-		if (matr.isSymmetrical(matr))
-		{
-			JakobiMethod_(matr);
-		}
-		else cout << " matrix isn't symmetrical" << endl;
-		break;
-	case linRegressParametr:
-		inputMatrForLin(matr);
-		LinRegression_(matr);
-		break;
-	case finishWork:
-		cout << "Work was ended." << endl;
-		return false;
-		break;
+	case 1: return cinMatrix("Pointers"); break;
+	case 2: return randPointers(); break;
 	default:
-
 		break;
 	}
 
-	return command;
 }
 
-
-
-void printCommands()
+CMatrix linregresion(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr)
 {
-	cout << "Choose command: " << endl;
-	cout << "To output matrix press 1" << endl;
-	cout << "To calculate by Gaussian elimination press 2" << endl;
-	cout << "To calculate by Kachmage method press 3" << endl;
-	cout << "To calculate by Jakobi method press 4" << endl;
-	cout << "To calculate linear regression press 5" << endl;
-	cout << "To finish work with system analysis calculator 2018 press 6 " << endl;
+	CAlgorithms alg;
+	return alg.LinRegression(pKoefsMatr);
 }
 
-
-bool AnalysisSimulator(CMatrix &matr)
+CMatrix jackobi(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr)
 {
-	int iCols, iRows;
-	printCommands();
-	inputCommand();
-	
-	cout << endl;
-	cout << "Please input number of columns in your matrix:";
-	cin >> iCols;
-	cout << endl;
-	cout << "Please input number of rows in your matrix:";
-	cin >> iRows;
-	cout << endl;
-	matr.setSize(iRows, iCols);
-
-	return doCommand(command, matr);
+	CAlgorithms alg;
+	return alg.JakobiMethod(pKoefsMatr);
 }
 
+CMatrix kachmage(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr)
+{
+	CAlgorithms alg;
+	return alg.KachmageMethod(pKoefsMatr, pFreeMembMatr);
+
+}
+
+CMatrix gauss(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr)
+{
+	CAlgorithms alg;
+	return alg.GaussianElimination(pKoefsMatr, pFreeMembMatr);
+}
+
+//	print aviable commands to use
+unsigned int infoCmd()
+{
+	std::cout << "Choose command you want to use(press a number):" << std::endl
+		<< "1 -> Gausse method to solve SoLE" << std::endl
+		<< "2 -> Kachmage method to solve SoLE" << std::endl
+		<< "3 -> Jackobi method to find ... numbers" << std::endl
+		<< "4 -> Linear regression to build a function" << std::endl;
+
+	unsigned int num = 0;
+	std::cin >> num;
+
+	return num;
+}
+
+CMatrix(*returnFunc())(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr)
+{
+	switch (infoCmd())
+	{
+	case 1: return gauss; break;
+	case 2: return kachmage; break;
+	case 3: return jackobi; break;
+	case 4: return linregresion; break;
+	default: return nullptr; break;
+	}
+}
+
+
+int main()
+{
+	std::cout << std::fixed;
+	std::cout.precision(4);
+
+	CMatrix(*pfunc)(const CMatrix * pKoefsMatr, const CMatrix * pFreeMembMatr) = returnFunc();
+
+
+	const CMatrix * pA = nullptr;
+	const CMatrix * pB = nullptr;
+
+	if (pfunc == linregresion)
+	{
+		pA = cinMatrForLinRegresion();
+		std::cout << *pA << std::endl;
+	}
+	else if (pfunc == jackobi)
+	{
+		pA = cinMatrix("Symmetrical");
+		std::cout << *pA << std::endl;
+	}
+	else if (pfunc == nullptr)
+	{
+		std::cout << "Error: pointer to function is nullptr" << std::endl;
+	}
+	else
+	{
+		pA = cinMatrix("Coefficients");
+		pB = cinMatrix("Free Numbers");
+		std::cout << *pA << std::endl << std::endl << *pB;
+	}
+
+
+	if (pfunc != nullptr)
+	{
+		printRes(&pfunc(pA, pB));
+	}
+
+	if (pA != nullptr) delete pA;
+	if (pB != nullptr) delete pB;
+
+	system("pause");
+	return 0;
+}

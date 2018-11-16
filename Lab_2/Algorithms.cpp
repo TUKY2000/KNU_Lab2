@@ -14,61 +14,54 @@
 
 CAlgorithms::CAlgorithms()
 {
-	matr = new CMatrix;
-	original = new CMatrix(*matr);
+	pMatr = nullptr;
+	pA = nullptr;
+	pB = nullptr;
 }
 
-
-CAlgorithms::CAlgorithms(const CMatrix & _matr)
-{
-	matr = new CMatrix(_matr);
-	original = new CMatrix(*matr);
-}
-
-void CAlgorithms::downlMatr(const CMatrix & _matr)
-{
-	matr = new CMatrix(_matr);
-	original = new CMatrix(*matr);
-}
-
-void CAlgorithms::downlMatr(const int & rows, const int & cols)
-{
-	matr = new CMatrix(rows, cols);
-	std::cin >> *matr;
-}
 
 CAlgorithms::~CAlgorithms()
 {
-	if (matr != nullptr)
+	if (pMatr != nullptr)
 	{
-		delete matr;
-		matr = nullptr;
+		delete pMatr;
 	}
+
+	pA = nullptr;
+	pB = nullptr;
 }
 
 
-CMatrix & CAlgorithms::GaussianElimination()
+CMatrix CAlgorithms::GaussianElimination(const CMatrix * _A, const CMatrix * _B)
 {
+	// prepare matrix for working
+	if (pA != nullptr) { delete pA; }			
+	pA = _A;
+	if (pB != nullptr) { delete pB; }			
+	pB = _B;
+	if (pMatr != nullptr) { delete pMatr; }		
+	pMatr = (*pA) | (*pB);
+ 	
 	directElimination();
-	CMatrix * res = new CMatrix(reverseSubstitution());
-	checkSolution(*res);
+	CMatrix * res = &reverseSubstitution();
+	checkSolution(res);
 	return *res;
 }
 
 bool CAlgorithms::nonZeroInCol(const int & col, std::pair<unsigned int, double> & leadEl) const
 {
-	for (size_t row = col; row < matr->getRows(); row++)
+	for (size_t row = col; row < pMatr->getRows(); row++)
 	{
-		if ((*matr)[row][col] != 0)
+		if ((*pMatr)[row][col] != 0)
 		{
-			leadEl = std::make_pair(row, (*matr)[row][col]);
+			leadEl = std::make_pair(row, (*pMatr)[row][col]);
 			return true;
 		}
 	}
 	return false;
 }
 
-unsigned int CAlgorithms::directElimination()
+void CAlgorithms::directElimination()
 {
 	unsigned int  index = 0
 		, next = index
@@ -76,7 +69,7 @@ unsigned int CAlgorithms::directElimination()
 
 	std::pair<unsigned int, double> leadEl;
 
-	for (; index < matr->getRows(); ++index)
+	for (; index < pMatr->getRows(); ++index)
 	{
 		if (!empty(index))
 		{
@@ -94,11 +87,11 @@ unsigned int CAlgorithms::directElimination()
 		}
 		else
 		{
-			if ((*matr)[index][matr->getCols()] != 0)
+			if ((*pMatr)[index][pMatr->getCols()] != 0)
 			{
 				throw std::logic_error("System of equations has not solution.");
 			}
-			else if (matr->getRows() + emptLines < matr->getCols())
+			else if (pMatr->getRows() + emptLines < pMatr->getCols())
 			{
 				throw std::logic_error("System of equations has an infinite number of solutions: SoE has " + std::to_string(emptLines) + " or more linearly dependent equations");
 			}
@@ -115,14 +108,14 @@ std::pair<unsigned const int, double> CAlgorithms::findMax(const int & col) cons
 
 	size_t row = col;
 	unsigned int res = row;
-	double maximum = (*matr)[row++][col],
+	double maximum = (*pMatr)[row++][col],
 		buffer = 0;
 
 
 
-	for (; row < matr->getRows(); ++row)
+	for (; row < pMatr->getRows(); ++row)
 	{
-		buffer = (*matr)[row][col];
+		buffer = (*pMatr)[row][col];
 		if (abs(maximum) < abs(buffer))
 		{
 			maximum = buffer;
@@ -138,35 +131,35 @@ void CAlgorithms::swap(const int & row1, const int & row2)
 	{
 		double temp = 0;
 
-		for (size_t col = 0; col < matr->getCols(); ++col)
+		for (size_t col = 0; col < pMatr->getCols(); ++col)
 		{
-			temp = (*matr)[row1][col];
-			(*matr)[row1][col] = (*matr)[row2][col];
-			(*matr)[row2][col] = temp;
+			temp = (*pMatr)[row1][col];
+			(*pMatr)[row1][col] = (*pMatr)[row2][col];
+			(*pMatr)[row2][col] = temp;
 		}
 	}
 }
 
 void CAlgorithms::normalize(unsigned const int & ROW, const double & elem)
 {
-	for (size_t col = 0; col < matr->getCols(); col++)
+	for (size_t col = 0; col < pMatr->getCols(); col++)
 	{
-		(*matr)[ROW][col] /= elem;
+		(*pMatr)[ROW][col] /= elem;
 	}
 }
 
 void CAlgorithms::subtraction(unsigned int ROW)
 {
-	if (ROW < matr->getRows() - 1)
+	if (ROW < pMatr->getRows() - 1)
 	{
 		size_t col = ROW;
-		for (size_t row = ROW + 1; row < matr->getRows(); ++row)
+		for (size_t row = ROW + 1; row < pMatr->getRows(); ++row)
 		{
 			col = ROW;
-			double koef = (*matr)[row][col];
-			for (; col < matr->getCols(); ++col)
+			double koef = (*pMatr)[row][col];
+			for (; col < pMatr->getCols(); ++col)
 			{
-				(*matr)[row][col] -= (*matr)[ROW][col] * koef;
+				(*pMatr)[row][col] -= (*pMatr)[ROW][col] * koef;
 			}
 		}
 	}
@@ -175,11 +168,11 @@ void CAlgorithms::subtraction(unsigned int ROW)
 bool CAlgorithms::empty(const unsigned int & row) const
 {
 	bool res = true;
-	for (int col = 0; col < matr->getCols(); ++col)
+	for (size_t col = 0; col < pMatr->getCols(); ++col)
 	{
-		if ((*matr)[row][col] != 0)
+		if ((*pMatr)[row][col] != 0)
 		{
-			if (col == matr->getCols())
+			if (col == pMatr->getCols())
 				break;
 
 			res = false;
@@ -191,21 +184,21 @@ bool CAlgorithms::empty(const unsigned int & row) const
 
 CMatrix & CAlgorithms::reverseSubstitution()
 {
-	CMatrix *res = new CMatrix(1, matr->getCols() - 1);
+	CMatrix *res = new CMatrix(1, pMatr->getCols() - 1);
 	double Ai_lead
 		, koef;
 
-	int rowLead = matr->getRows() - 1;
+	int rowLead = pMatr->getRows() - 1;
 
-	for (int col = matr->getCols() - 2; col >= 0; --col)
+	for (int col = pMatr->getCols() - 2; col >= 0; --col)
 	{
-		Ai_lead = (*matr)[rowLead][matr->getCols() - 1];
+		Ai_lead = (*pMatr)[rowLead][pMatr->getCols() - 1];
 		(*res)[0][col] = (Ai_lead);
 		for (int row = rowLead; row > 0; --row)
 		{
-			koef = (*matr)[row - 1][col];
-			(*matr)[row - 1][matr->getCols() - 1] -= koef * Ai_lead;
-			(*matr)[row - 1][col] -= koef * (*matr)[rowLead][col];
+			koef = (*pMatr)[row - 1][col];
+			(*pMatr)[row - 1][pMatr->getCols() - 1] -= koef * Ai_lead;
+			(*pMatr)[row - 1][col] -= koef * (*pMatr)[rowLead][col];
 		}
 		--rowLead;
 	}
@@ -216,13 +209,15 @@ CMatrix & CAlgorithms::reverseSubstitution()
 
 // Jacobi
 
-CMatrix &   CAlgorithms::JakobiMethod()
+CMatrix CAlgorithms::JakobiMethod(const CMatrix * _Symetrical)
 {
-	std::cout << *matr << "\n";
+	pMatr = new CMatrix(*_Symetrical);
+
+	//std::cout << *pMatr << "\n";
 	CMatrix * turnMatr = nullptr;
-	turnMatr = new CMatrix(*matr);
+	turnMatr = new CMatrix(*pMatr);
 	double precision = 0.005; // than we will changed that and precision will become parameter from user 
-	size_t maxRow = matr->getRows(), maxCol = matr->getCols();
+	size_t maxRow = pMatr->getRows(), maxCol = pMatr->getCols();
 	double max = 0.0;
 	double fault = 0.0;
 	calculateJakobiFault(fault);
@@ -232,7 +227,7 @@ CMatrix &   CAlgorithms::JakobiMethod()
 		max = 0.0;
 		// Searching max element.
 		JakobiFindMax(max, maxRow, maxCol);
-		if (max < precision) break; // need to end while if Jakobi Method finished? but fault still bigger than precision
+		if (max < precision) break; // need to end while if Jacobi Method finished? but fault still bigger than precision
 		prepareTurnMatr(maxRow, maxCol, *turnMatr);
 		JakobiTurnMatrix(*turnMatr);
 		cleanZeroElements(precision);
@@ -246,21 +241,21 @@ CMatrix &   CAlgorithms::JakobiMethod()
 void CAlgorithms::JakobiFindMax(double &max, size_t &maxRow, size_t &maxCol)
 {
 
-	for (int row = 0; row < matr->getCols(); row++)
+	for (size_t row = 0; row < pMatr->getCols(); row++)
 	{
-		for (int col = 0; col < matr->getCols(); col++)
+		for (size_t col = 0; col < pMatr->getCols(); col++)
 		{
 			if (row != col)
 			{
-				if ((*matr)[row][col] > 0 && (*matr)[row][col] > max)
+				if ((*pMatr)[row][col] > 0 && (*pMatr)[row][col] > max)
 				{
-					max = (*matr)[row][col];
+					max = (*pMatr)[row][col];
 					maxRow = row;
 					maxCol = col;
 				}
-				else if ((*matr)[row][col] < 0 && -(*matr)[row][col] > max)
+				else if ((*pMatr)[row][col] < 0 && -(*pMatr)[row][col] > max)
 				{
-					max = -(*matr)[row][col];
+					max = -(*pMatr)[row][col];
 					maxRow = row;
 					maxCol = col;
 				}
@@ -271,10 +266,10 @@ void CAlgorithms::JakobiFindMax(double &max, size_t &maxRow, size_t &maxCol)
 
 CMatrix & CAlgorithms::JakobiSolution()
 {
-	CMatrix * res = new CMatrix(1, matr->getCols(), 0);
-	for (int row = 0; row < res->getCols(); row++)
+	CMatrix * res = new CMatrix(1, pMatr->getCols(), 0);
+	for (size_t row = 0; row < res->getCols(); row++)
 	{
-		(*res)[0][row] = (*matr)[row][row];
+		(*res)[0][row] = (*pMatr)[row][row];
 	}
 
 	return *res;
@@ -282,9 +277,9 @@ CMatrix & CAlgorithms::JakobiSolution()
 
 void CAlgorithms::makeIdentityMatrix(CMatrix & turnMatr)
 {
-	for (int row = 0; row < matr->getCols(); row++)
+	for (size_t row = 0; row < pMatr->getCols(); row++)
 	{
-		for (int col = 0; col < matr->getCols(); col++)
+		for (size_t col = 0; col < pMatr->getCols(); col++)
 		{
 			turnMatr[row][col] = 0;
 		}
@@ -294,9 +289,9 @@ void CAlgorithms::makeIdentityMatrix(CMatrix & turnMatr)
 
 void CAlgorithms::makeZeroMatrix(CMatrix & other)
 {
-	for (int row = 0; row < other.getCols(); row++)
+	for (size_t row = 0; row < other.getCols(); row++)
 	{
-		for (int col = 0; col < other.getCols(); col++)
+		for (size_t col = 0; col < other.getCols(); col++)
 		{
 			(other)[row][col] = 0.0;
 		}
@@ -308,7 +303,7 @@ void CAlgorithms::prepareTurnMatr(size_t maxRow, size_t maxCol, CMatrix &turnMat
 	double fi;
 	makeIdentityMatrix(turnMatr);
 
-	if (((*matr)[maxRow][maxRow] == (*matr)[maxCol][maxCol]) && ((*matr)[maxCol][maxCol] == (*matr)[maxRow][maxCol]))
+	if (((*pMatr)[maxRow][maxRow] == (*pMatr)[maxCol][maxCol]) && ((*pMatr)[maxCol][maxCol] == (*pMatr)[maxRow][maxCol]))
 	{
 		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] =
 			turnMatr[maxCol][maxRow] = sqrt(2.0) / 2.0;
@@ -316,8 +311,8 @@ void CAlgorithms::prepareTurnMatr(size_t maxRow, size_t maxCol, CMatrix &turnMat
 	}
 	else
 	{
-		fi = 0.5 * atan((2.0 * (*matr)[maxRow][maxCol]) /
-			((*matr)[maxRow][maxRow] - (*matr)[maxCol][maxCol]));
+		fi = 0.5 * atan((2.0 * (*pMatr)[maxRow][maxCol]) /
+			((*pMatr)[maxRow][maxRow] - (*pMatr)[maxCol][maxCol]));
 		turnMatr[maxRow][maxRow] = turnMatr[maxCol][maxCol] = cos(fi);
 		turnMatr[maxRow][maxCol] = -sin(fi);
 		turnMatr[maxCol][maxRow] = sin(fi);
@@ -327,25 +322,25 @@ void CAlgorithms::prepareTurnMatr(size_t maxRow, size_t maxCol, CMatrix &turnMat
 void CAlgorithms::JakobiTurnMatrix(CMatrix &turnMatr)
 {
 	CMatrix * temp = nullptr;
-	temp = new CMatrix(*matr);
+	temp = new CMatrix(*pMatr);
 
-	*temp = (~turnMatr) * (*matr);
+	*temp = (~turnMatr) * (*pMatr);
 
 	*temp = (*temp) * (turnMatr);
 
 	double fault = 0.0;
-	*matr = *temp;
+	*pMatr = *temp;
 	if (temp != nullptr) delete temp;
 }
 
 
 void CAlgorithms::calculateJakobiFault(double & fault)
 {
-	for (int row = 0; row < matr->getCols(); row++)
+	for (size_t row = 0; row < pMatr->getCols(); row++)
 	{
-		for (int col = row + 1; col < matr->getCols(); col++)
+		for (size_t col = row + 1; col < pMatr->getCols(); col++)
 		{
-			fault = fault + (*matr)[row][col] * (*matr)[row][col];
+			fault = fault + (*pMatr)[row][col] * (*pMatr)[row][col];
 		}
 	}
 	fault = sqrt(fault);
@@ -353,57 +348,57 @@ void CAlgorithms::calculateJakobiFault(double & fault)
 
 void CAlgorithms::cleanZeroElements(double precision)
 {
-	for (int row = 0; row < matr->getCols(); row++)
+	for (size_t row = 0; row < pMatr->getCols(); row++)
 	{
-		for (int col = 0; col < matr->getCols(); col++)
+		for (size_t col = 0; col < pMatr->getCols(); col++)
 		{
-			if ((*matr)[row][col] < precision) (*matr)[row][col] = 0;
+			if ((*pMatr)[row][col] < precision) (*pMatr)[row][col] = 0;
 		}
 	}
 
 }
 
 // Linear regression
-CMatrix & CAlgorithms::getFreeMembMatr()
+CMatrix & CAlgorithms::getFreeMembMatr(const CMatrix & pointers)
 {
 	CMatrix * res = nullptr;
-	res = new CMatrix(matr->getCols(), 1, 0);
+	res = new CMatrix(pointers.getCols(), 1, 0);
 
 	//	first elem
-	for (size_t row = 0; row < matr->getRows(); ++row)
+	for (size_t row = 0; row < pointers.getRows(); ++row)
 	{
-		(*res)[0][0] += (*matr)[row][0];
+		(*res)[0][0] += (pointers)[row][0];
 
 	}
 
 	//	 from 1 to last elems
-	for (size_t col = 1, row = 1; col < matr->getCols(); ++col, ++row)
+	for (size_t col = 1, row = 1; col < pointers.getCols(); ++col, ++row)
 	{
-		for (size_t rowAdd = 0; rowAdd < matr->getRows(); ++rowAdd)
+		for (size_t rowAdd = 0; rowAdd < pointers.getRows(); ++rowAdd)
 		{
-			(*res)[row][0] += (*matr)[rowAdd][0] * (*matr)[rowAdd][col];
+			(*res)[row][0] += (pointers)[rowAdd][0] * (pointers)[rowAdd][col];
 		}
 	}
 
 	return *res;
 }
 
-CMatrix & CAlgorithms::getSumMatr()
+CMatrix & CAlgorithms::getSumMatr(const CMatrix & pointers)
 {
 	CMatrix * res = nullptr;
-	res = new CMatrix(matr->getCols(), matr->getCols(), 0);
+	res = new CMatrix(pointers.getCols(), pointers.getCols(), 0);
 
 	// [0][0] elem
-	*res[0][0] = matr->getRows();
+	*res[0][0] = pointers.getRows();
 
 	double summ = 0;
 
 	// 0 row and 0 col
-	for (int col = 1; col < matr->getCols(); ++col)
+	for (size_t col = 1; col < pointers.getCols(); ++col)
 	{
-		for (int row = 0; row < matr->getRows(); ++row)
+		for (size_t row = 0; row < pointers.getRows(); ++row)
 		{
-			summ += (*matr)[row][col];
+			summ += (pointers)[row][col];
 		}
 
 		(*res)[col][0] = (*res)[0][col] = summ;
@@ -411,15 +406,14 @@ CMatrix & CAlgorithms::getSumMatr()
 	}
 
 	// from 1 to N
-	for (int row = 1; row < res->getRows(); ++row)
+	for (size_t row = 1; row < res->getRows(); ++row)
 	{
-		for (int col = 1; col < res->getRows(); ++col)
+		for (size_t col = 1; col < res->getRows(); ++col)
 		{
 			//	calculate number of element of result matrix [row][col]
-			for (int dot = 0; dot < matr->getRows(); ++dot)
+			for (size_t dot = 0; dot < pointers.getRows(); ++dot)
 			{
-				(*res)[row][col] += (*matr)[dot][row] * (*matr)[dot][col];
-				
+				(*res)[row][col] += (pointers)[dot][row] * (pointers)[dot][col];
 			}
 		}
 	}
@@ -427,95 +421,56 @@ CMatrix & CAlgorithms::getSumMatr()
 }
 
 
-CMatrix & CAlgorithms::LinRegression()
+CMatrix CAlgorithms::LinRegression(const CMatrix * _Pointers)
 {
-	CMatrix * res = new CMatrix;
-
-	CMatrix *A = nullptr;
-	CMatrix *B = nullptr;
-
-	A = &getSumMatr();
-	B = &getFreeMembMatr();
+	CMatrix A = getSumMatr(*_Pointers);
+ 	CMatrix B = getFreeMembMatr(*_Pointers);
 	
-	if (matr != nullptr)	delete matr;
-	matr = &((*A) | (*B));
+	std::cout << std::endl << std::endl << A << std::endl << std::endl << B << std::endl << std::endl;
 
-	if (original != nullptr)	delete original;
-	original = new CMatrix(*matr);
-
-	std::cout << *matr;
-	*res = GaussianElimination();
-	return *res;
+	return GaussianElimination(&A, &B);
 }
 
 // kachmage
-CMatrix & CAlgorithms::KachmageMethod()
+CMatrix CAlgorithms::KachmageMethod(const CMatrix * _A, const CMatrix * _B)
 {
-	double precision = 0.000000001;
+	// prepare matrix for working
+	if (pA != nullptr) { delete pA; }			pA = _A;
+	if (pB != nullptr) { delete pB; }			pB = _B;
+	if (pMatr != nullptr) { delete pMatr; }		pMatr = (*pA | *pB);
 
-	CMatrix * X_i = new CMatrix(1, matr->getCols() - 1)
-		, *X_prev = new CMatrix(1, matr->getCols() - 1)
-		, *M_row = new CMatrix(1, matr->getCols() - 1)
-		, *Sub = nullptr
-		, *Mult = nullptr
-		, *Temp = nullptr;
+	double precision = 0.00000001;
 
-	if (X_i != nullptr) delete X_i;
-	X_i = &getMRow(0);
+	CMatrix X_i = getMRow(0)
+		, X_prev
+		, M_row;
 
-	*X_prev = *X_i;
 
 	unsigned int row = 0;
 
-	double skalarVal = 0
-		, freeVal = 0
-		, numerator = 0
-		, denominator = 0
-		, fraction = 0
-		, check = 0;
+	double check = 0;
 	do
 	{
-		if (M_row != nullptr)	delete M_row;
-		M_row = &getMRow(row);
+		M_row = getMRow(row);
 
-		skalarVal = skalar(*M_row, *X_i);
-		freeVal = (*matr)[row][matr->getCols() - 1];
-		numerator = freeVal - skalarVal;
-		denominator = (norma(*M_row) * norma(*M_row));
-		fraction = (numerator) / denominator;
+		X_prev = X_i;
 
-		if (X_prev != nullptr)	delete X_prev;
-		X_prev = new CMatrix(*X_i);
+		X_i = X_i + M_row * (((*pMatr)[row][pMatr->getCols() - 1] - skalar(M_row, X_i)) / (norma(M_row) * norma(M_row)));
 
-		if (Mult != nullptr) delete Mult;
-		Mult = &(*M_row * (fraction));
-		
-		if (Temp != nullptr) delete Temp;
-		Temp = &(*X_i + *Mult);
+		check = norma(X_i - X_prev);
 
-		if (X_i != nullptr) delete X_i;
-		X_i = new CMatrix(*Temp);
-
-		if (Sub != nullptr) delete Sub;
-		Sub = &(*X_i - *X_prev);
-
-		check = norma(*Sub);
-
-		std::cout << row << '\t' << *M_row << '\t' << *X_i << std::endl;
+		std::cout << row << '\t' << M_row << '\t' << X_i << std::endl;
 
 		++row;
 
-		if (row >= matr->getRows())	row = 0;
+		if (row >= pMatr->getRows())	row = 0;
 		
 	} while (check >= precision);
 
 
-	if (M_row != nullptr)	delete M_row;
-	if (X_prev != nullptr)	delete X_prev;
+	checkSolution(&X_i);
 
-	checkSolution(*X_i);
-
-	return *X_i;
+	return X_i;
 }
 
 double CAlgorithms::norma(const CMatrix & vect)
@@ -529,16 +484,16 @@ double CAlgorithms::norma(const CMatrix & vect)
 	return sqrt(squareSumm);
 }
 
-CMatrix & CAlgorithms::getMRow(const unsigned int & row)
+CMatrix CAlgorithms::getMRow(const unsigned int & row)
 {
-	CMatrix * res = new CMatrix(1, matr->getCols() - 1);
+	CMatrix res(1, pMatr->getCols() - 1);
 	double val = 0;	//	time val for testing
-	for (unsigned int col = 0; col < res->getCols(); ++col)
+	for (unsigned int col = 0; col < res.getCols(); ++col)
 	{
-		val = (*matr)[row][col];
-		(*res)[0][col] = val;
+		val = (*pMatr)[row][col];
+		(res)[0][col] = val;
 	}
-	return *res;
+	return res;
 }
 
 double CAlgorithms::skalar(const CMatrix & A, const CMatrix & B)
@@ -558,46 +513,11 @@ double CAlgorithms::skalar(const CMatrix & A, const CMatrix & B)
 	return res;
 }
 
-void CAlgorithms::checkSolution(const CMatrix & result)
+void CAlgorithms::checkSolution(CMatrix * result)
 {
-	double num = 0
-		, num1 = 0
-		, num2 = 0;
-
-	std::cout << std::endl << "Checking solution of SoLE: " << std::endl;
-	for (size_t row = 0; row < original->getRows(); ++row)
-	{
-		for (size_t col = 0; col < original->getCols() - 1; ++col)
-		{
-			num1 = (*original)[row][col];
-			num2 = result[0][col];
-			num += num1 * num2;
-		}
-		std::cout << num << ", ";
-		num = 0;
-	}
+	CMatrix transport = ~(*result);
+	CMatrix Ax = (CMatrix)(*pA) * transport;
+	CMatrix res = Ax - *pB;
+	CMatrix res_transp = ~res;
+	std::cout << "check : " << res_transp;
 }
-
-// kachmage
-//double CAlgorithms::KachmageMethod(CMatrix & b)
-//{
-	//double precision = 0.00000000001;
-	//CMatrix x(*this, 0);
-	//CMatrix x1(1, N_size, 0);
-	//CMatrix sub(1, N_size, 1);
-	//int j = 0;
-	//while (sub.norma() > precision)
-	//{
-	//	CMatrix ai(*this, j);
-	//	double temp = ((b.M[0][j] - ai.skal_dob(x)) / (ai.norma()*ai.norma()));
-	//	ai = ai * temp;
-	//	x1 = x + ai;
-	//	sub = x1 - x;
-	//	//  cout << sub.norma()<<endl;
-	//	x = x1;
-	//	if (j < N_size - 1)
-	//		j++;
-	//	else j = 0;
-	//}
-	//return x;
-//}

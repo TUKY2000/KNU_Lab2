@@ -15,51 +15,46 @@ public:
 	CAlgorithms();
 	~CAlgorithms();
 
-	CAlgorithms(const CMatrix & _matr);
-
-	void downlMatr(const CMatrix & _matr);
-
-	void downlMatr(const int & rows, const int & cols);
-
 	//************************************
 	// Function:	solve the matrix by Gaussian method
 	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	CMatrix & GaussianElimination();
+	CMatrix GaussianElimination(const CMatrix * _A, const CMatrix * _B);
 
 	//************************************
 	// Function:	Doing all Jakobi method
 	// Returns:		return massive of own values !
 	// Parameter:	
 	//************************************
-	CMatrix & JakobiMethod();
+	CMatrix JakobiMethod(const CMatrix * _Symetrical);
 
 	//************************************
 	// Function:	find coefficients of the line function 
 	// Returns:		CMatrix 
 	// Parameter:	void
 	//************************************
-	CMatrix & LinRegression();
+	CMatrix LinRegression(const CMatrix * _Poiners);
 
 	//************************************
 	// Function:	solve the matrix by Kachmage method
 	// Returns:		CMatrix  
 	// Parameter:	void
 	//************************************
-	CMatrix & KachmageMethod();
+	CMatrix KachmageMethod(const CMatrix *_A, const CMatrix *_B);
 
 private:
 
-	CMatrix * matr = nullptr;
-	CMatrix * original = nullptr;
+	CMatrix * pMatr = nullptr;
+	const CMatrix * pA = nullptr;
+	const CMatrix * pB = nullptr;
 
 	//************************************
 	// Function:	reduce the matrix to triangular shape (first part of Gaussian method)
 	// Returns:		number of linearly independent equations  
 	// Parameter:	void
 	//************************************
-	unsigned int directElimination();
+	void directElimination();
 
 	//************************************
 	// Function:	Find max element in column
@@ -180,21 +175,14 @@ private:
 	// Returns:		CMatrix &
 	// Parameter:	void 
 	//***************************************************
-	CMatrix & getFreeMembMatr();
+	CMatrix & getFreeMembMatr(const CMatrix & pointers);
 
 	//***************************************************
 	// Function:	build the matrix c_kj = summ_(i->M)(x_k * x_j)
 	// Returns:		CMatrix &
 	// Parameter:	void
 	//***************************************************
-	CMatrix & getSumMatr();
-
-	//***************************************************
-	// Function:	generate random pointers that are not far from the function which we need to find
-	// Returns:		CMatrix &
-	// Parameter:	matrix(vector) of coefficients of function
-	//***************************************************
-	CMatrix & randPointers(const CMatrix & coeffs);
+	CMatrix & getSumMatr(const CMatrix & pointers);
 
 // Kachmage
 
@@ -210,7 +198,7 @@ private:
 	// Returns:		CMatrix &
 	// Parameter:	number of row which will be the matrix
 	//***************************************************
-	CMatrix & getMRow(const unsigned int & row);
+	CMatrix getMRow(const unsigned int & row);
 
 	//***************************************************
 	// Function:	calculate a skalar of two matrices(vectors)
@@ -218,4 +206,6 @@ private:
 	// Parameter:	two matrix
 	//***************************************************
 	double skalar(const CMatrix & A, const CMatrix & B);
+
+	void checkSolution(CMatrix * result);
 };

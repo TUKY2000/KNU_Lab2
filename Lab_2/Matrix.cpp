@@ -8,10 +8,13 @@
 #include "Matrix.h"
 #include <string>
 #include <iostream>
+#include <ctime>
 
 CMatrix::CMatrix()
 	: cols(1)
 	, rows(1)
+	, mass(nullptr)
+	, redcode(nullptr)
 {
 	create();
 }
@@ -19,6 +22,8 @@ CMatrix::CMatrix()
 CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols)
 	: cols(_cols)
 	, rows(_rows)
+	, mass(nullptr)
+	, redcode(nullptr)
 {
 	create();
 }
@@ -26,22 +31,28 @@ CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols)
 CMatrix::CMatrix(const unsigned int _rows, const unsigned _cols, const double num)
 	: cols(_cols)
 	, rows(_rows)
+	, mass(nullptr)
+	, redcode(nullptr)
 {
 	create();
 	setElemNum(num);
 }
 
 CMatrix::CMatrix(const CMatrix & other)
+	: mass(nullptr)
+	, redcode(nullptr)
 {
-	if (*this == other)
+	if (this == &other)
 		throw std::logic_error("");
-	else
-		*this = other;
+
+	*this = other;
 }
 
 CMatrix::CMatrix(CMatrix && other)
+	: mass(nullptr)
+	, redcode(nullptr)
 {
-	if (*this == other)
+	if (this == &other)
 		throw std::logic_error("");
 	else
 	{
@@ -54,13 +65,25 @@ CMatrix::CMatrix(CMatrix && other)
 CMatrix::~CMatrix()
 {
 	if (mass != nullptr)
-		delete mass;
+	{
+		delete[] mass;
+	}
+		
+	if (redcode != nullptr) 
+	{ 
+		delete redcode; 
+		redcode = nullptr;
+	}
+		
 }
 
 
 void CMatrix::create()
 {
-	mass = new double[rows * cols];
+	if (this->mass != nullptr) delete this->mass;
+	this->mass = new double[rows * cols];
+
+	redcode = nullptr;
 }
 
 void CMatrix::nulify()
@@ -79,22 +102,26 @@ void CMatrix::setElemNum(const double num)
 	}
 }
 
-// added for Jakobi method 
+// added for Jacobi method 
 void CMatrix::symmetricalRandomMatrixValues()
 {
-	for (size_t col = 0; col < cols; ++col)
+	srand((unsigned int)time(0));
+	for (size_t row = 0; row < rows; ++row)
 	{
-		for (size_t row = 0; row < rows - col; ++row)
+		for (size_t col = row; col < cols; ++col)
 		{
-			(mass + row * cols)[col] = ((-1) ^ rand()) *(rand() % 5);
-			(mass + row * cols)[row] = (mass + row * cols)[col];
+			(mass + row * cols)[col] = (pow((-1), rand())) *(rand() % 5);
+			(mass + col * cols)[row] = (mass + row * cols)[col];
 		}
 	}
 }
 
-CMatrix & CMatrix::operator|(const CMatrix & other)
+CMatrix * CMatrix::operator|(const CMatrix & other) const
 {
 	if (rows != other.getRows()) throw std::logic_error("");
+	
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(rows, cols + other.getCols(), 0);
 	CMatrix * res = new CMatrix(rows, cols + other.getCols(), 0);
 	double num = 0;
 	size_t col = 0;
@@ -112,16 +139,17 @@ CMatrix & CMatrix::operator|(const CMatrix & other)
 			(*res)[row][col] = other[row][col - cols];
 		}
 	}
-	return *res;
+	return res;
 }
 
 void CMatrix::randomMatrixValues()
 {
+	srand((unsigned int)time(0));
 	for (size_t col = 0; col < cols; ++col)
 	{
 		for (size_t row = 0; row < rows; ++row)
 		{
-			(mass + row * cols)[col] = ((-1) ^ rand()) *(rand() % 5);
+			(mass + row * cols)[col] = (pow((-1), rand())) *(rand() % 5);
 		}
 	}
 }
@@ -164,70 +192,94 @@ bool CMatrix::operator==(const CMatrix & other) const
 	return true;
 }
 
-CMatrix & CMatrix::operator+(const CMatrix & other)
+CMatrix CMatrix::operator+(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
+
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(rows, cols, 0);
+
+	CMatrix res(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			(*matrNew)[row][col] = (mass + row * rows)[col] + other[row][col];
-	return *matrNew;
+			(res)[row][col] = (mass + row * rows)[col] + other[row][col];
+
+	return res;
 }
 
-CMatrix & CMatrix::operator-(const CMatrix & other)
+CMatrix CMatrix::operator-(const CMatrix & other)
 {
 	if (this->cols != other.getCols() || this->rows != other.getRows())
 		throw std::logic_error("");
-	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
+
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(rows, cols, 0);
+
+	CMatrix res(this->rows, this->cols);
 	for (size_t row = 0; row < rows; row++)
 		for (size_t col = 0; col < cols; col++)
-			(*matrNew)[row][col] = (mass + row * rows)[col] - other[row][col];
-	return *matrNew;
+			(res)[row][col] = (mass + row * cols)[col] - other[row][col];
+
+	return res;
 }
 
-CMatrix & CMatrix::operator*(const CMatrix & other)
+CMatrix CMatrix::operator*(const CMatrix & other)
 {
 	if (this->cols != other.getRows())
 		throw std::logic_error("");
-	CMatrix * matrNew = new CMatrix(this->rows, other.getCols(), 0);
-	for (size_t row = 0; row < matrNew->getRows(); ++row)
+
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(rows, other.getCols(), 0);
+
+	CMatrix res(this->rows, other.getCols(), 0);
+	for (size_t row = 0; row < res.getRows(); ++row)
 	{
-		for (size_t col = 0; col < matrNew->getCols(); ++col)
+		for (size_t col = 0; col < res.getCols(); ++col)
 		{
 			for (size_t inner = 0; inner < this->cols; ++inner)
 			{
-				(*matrNew)[row][col] += (mass + row * cols)[inner] * other[inner][col];
+				(res)[row][col] += (mass + row * cols)[inner] * other[inner][col];
 			}
 		}
 	}
-	return *matrNew;
+
+	return res;
 }
 
-CMatrix & CMatrix::operator*(const double & num)
+CMatrix CMatrix::operator*(const double & num)
 {
-	CMatrix * matrNew = new CMatrix(this->rows, this->cols);
-	for (size_t row = 0; row < matrNew->getRows(); ++row)
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(rows, cols, 0);
+
+	CMatrix res(this->rows, this->cols);
+	for (size_t row = 0; row < res.getRows(); ++row)
 	{
-		for (size_t col = 0; col < matrNew->getCols(); ++col)
+		for (size_t col = 0; col < res.getCols(); ++col)
 		{
-			(*matrNew)[row][col] = (mass + row * rows)[col] * num;
+			(res)[row][col] = (mass + row * rows)[col] * num;
 		}
 	}
-	return *matrNew;
+	return res;
 }
 
-CMatrix & CMatrix::operator~()
+CMatrix CMatrix::operator~()
 {
-	CMatrix *res = new CMatrix(cols, rows, 0);
+	CMatrix res(cols, rows, 0);
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(cols, rows, 0);
+
+	double temp = 0;
+
 	for (unsigned int row = 0; row < rows; ++row)
 	{
 		for (unsigned int col = 0; col < cols; ++col)
 		{
-			(*res)[col][row] = (mass + row * cols)[col];
+			(res)[col][row] = (mass + row * cols)[col];
 		}
 	}
-	return *res;
+
+	return res;
 }
 
 double * CMatrix::operator[](const int & row) const
@@ -267,7 +319,7 @@ std::istream & operator >> (std::istream & input, CMatrix & matr)
 		{
 			std::cout << "Please input value of x[" << row << "][" << col << "] " << ":";
 			input >> snum;
-			matr[row][col] = std::atol(snum.c_str());
+			matr[row][col] = std::atof(snum.c_str());
 			std::cout << std::endl;
 		}
 	}
@@ -292,15 +344,19 @@ bool CMatrix::isSymmetrical(CMatrix & other) // maybe ,mistake with parameter
 	return result;
 }
 
-CMatrix & CMatrix::unitary(const unsigned int & dim)
+CMatrix CMatrix::unitary(const unsigned int & dim)
 {
-	CMatrix * res = new CMatrix(dim, dim, 0);
+	//if (redcode != nullptr)	delete redcode;
+	//redcode = new CMatrix(dim, dim, 0);
+
+	CMatrix res(dim, dim, 0);
 
 	for (size_t row = 0; row < dim; ++row)
 	{
-		(*res)[row][row] = 1;
+		(res)[row][row] = 1;
 	}
-	return *res;
+
+	return res;
 }
 
 void CMatrix::createGilbertMatrix()
